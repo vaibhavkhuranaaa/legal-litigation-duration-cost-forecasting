@@ -2,18 +2,19 @@
 
 [![Quality](https://github.com/vaibhavkhuranaaa/legal-litigation-duration-cost-forecasting/actions/workflows/quality.yml/badge.svg)](https://github.com/vaibhavkhuranaaa/legal-litigation-duration-cost-forecasting/actions/workflows/quality.yml)
 
-[Open the aggregate public demo](https://vaibhavkhuranaaa.github.io/legal-litigation-duration-cost-forecasting/). It runs entirely in the browser from the same approved aggregate constants as the offline container; no case-level data or duration model is shipped.
+[Open the full-population public explorer](https://vaibhavkhuranaaa.github.io/legal-litigation-duration-cost-forecasting/). It runs entirely in the browser from a thresholded analytical cube built from all 5,008,334 governed records; no case-level data or duration model is shipped.
 
 Ready local product for nationwide federal civil operations analytics and synthetic planning. It
 includes verified acquisition, a replayable raw platform, a tested dbt warehouse, governed marts,
-typed FastAPI contracts, an accessible React interface, and an offline aggregate SQLite container.
+typed FastAPI contracts, an accessible React interface, and an offline full-population container.
 Raw data and warehouses remain private. Duration forecasts are disabled because model gates failed.
 
 ## What it does
 
-The product supports two decisions:
+The product supports three decisions:
 
 - Legal-operations leaders review federal civil portfolio duration, pending inventory, coverage, and calibration.
+- Analysts filter the complete governed population across 94 districts, 14 nature families, 17 filing years, and four pending-age bands; cells below 200 records are withheld.
 - Matter planners compare observed historical cohorts, receive explicit forecast refusals, and explore clearly synthetic resource and budget scenarios.
 
 Outputs use public court metadata, preserve open cases through right censoring, show provenance, and refuse unsupported forecasts. Product is not legal advice. Historical benchmarks are not predictions. Synthetic budget scenarios are not observed billing or real cost forecasts.
@@ -24,7 +25,8 @@ FJC IDB is the population backbone. CourtListener RECAP is gated enrichment. U.S
 tables provide aggregate validation. Python 3.12 and Polars handle acquisition and bounded
 processing; dbt Core builds the private canonical warehouse and marts. FastAPI and React with
 TypeScript, Vite, and ECharts form the product layer. The local release reads only a deidentified,
-aggregate SQLite seed and packages no model, warehouse, source dataset, or cloud credential.
+aggregate SQLite seed and a versioned, identifier-free population cube. It packages no model,
+warehouse, source dataset, or cloud credential.
 
 See [architecture](docs/architecture.md), [data contract](docs/data-contract.md), [analytics marts](docs/analytics-marts.md), [intake survival evaluation](docs/survival-model.md), and the [M7 recovery and release plan](docs/m7-recovery-implementation-plan.md).
 
@@ -43,7 +45,7 @@ Source reconciliation verified 100 percent reviewed precision across 800 blinded
 
 ## Limits
 
-- No dataset is tracked in Git.
+- No source or case-level dataset is tracked in Git. The approved public artifact contains aggregate evidence only.
 - No real legal-cost data is used.
 - No FJC and RECAP match is assumed.
 - No judge, party, attorney, document-text, legal-outcome, or legal-advice feature is included.
@@ -52,8 +54,9 @@ Source reconciliation verified 100 percent reviewed precision across 800 blinded
 
 ## Scaling
 
-The seeded demo runs offline from a deidentified SQLite extract without BigQuery credentials or live
-warehouse queries. Scaled design remains unapproved and outside this release.
+The seeded demo runs offline from a deidentified SQLite extract and a 1.8 MB aggregate cube derived
+from the complete governed population, without BigQuery credentials or live warehouse queries.
+Scaled design remains unapproved and outside this release.
 
 ## Current checks
 
@@ -75,10 +78,12 @@ M5 validates the complete FJC population against AO Table C for the 12 months en
 
 M6 provides contracted portfolio, filing-cohort, pending-inventory, duration-summary, comparable-case, and data-coverage marts. Aggregate marts reconcile to all 5,008,334 statistical records, pending inventory reconciles to all 457,327 right-censored records, and comparable cases reconcile to all 4,645,719 collision-free cases. Observed-duration averages are descriptive only.
 
+The public explorer consumes those complete marts rather than a sample. It publishes exact nationwide and one-dimensional totals, plus district-by-nature, annual filing, and pending-age cells with at least 200 records. The build verifies 94 districts, 14 nature families, 17 filing years, all 457,327 pending records, zero matter-level rows, stable ordering, and exact national reconciliation.
+
 M7 evaluates Kaplan-Meier and XGBoost AFT on 329,617 later-filed held-out cases. Kaplan-Meier records 4.86 percent calibration error at 12 months and 11.47 percent at 24 months. XGBoost records 1.74 percent and 8.09 percent respectively. Both fail the supported-slice gate. Protocol-v3 development also fails slice and coverage gates without reading its final holdout. A separate label-mature aggregate baseline failed every rolling development fold, so its final holdout remains sealed. Frozen policy code, capability-specific readiness, and reason codes preserve those failures while authorizing the non-predictive operations release.
 
 M8 through M14 complete that release: milestone events fail closed when required entry data is
-absent; scenarios are explicitly synthetic; the API exposes eight versioned contracts; the
+absent; scenarios are explicitly synthetic; the API exposes ten versioned contracts; the
 responsive interface passed zero-violation accessibility checks; reliability and security controls
 are tested; the aggregate demo runs as an unprivileged, network-independent container; and the
 integrated release gate passes. See [offline demo](docs/demo.md), [model card](docs/model-card.md),

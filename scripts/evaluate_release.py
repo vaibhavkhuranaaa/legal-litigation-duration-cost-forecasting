@@ -29,6 +29,7 @@ def evaluate() -> dict[str, object]:
     client = TestClient(app)
     readiness = client.get("/v1/readiness").json()
     provenance = client.get("/v1/provenance").json()
+    explorer = client.get("/v1/population-explorer").json()
     forecast = client.post(
         "/v1/forecast",
         json={
@@ -53,16 +54,20 @@ def evaluate() -> dict[str, object]:
         "forecast_refused": forecast.get("status") == "forecast_unavailable",
         "synthetic_cost_boundary": provenance.get("real_cost_forecast") is False,
         "demo_seed_deterministic": seed_replay,
+        "full_population_reconciled": explorer.get("population", {}).get("statistical_records")
+        == 5_008_334,
+        "public_cube_matter_free": explorer.get("publication_policy", {}).get("matter_level_rows")
+        == 0,
         "public_forbidden_artifacts": not public_forbidden,
     }
     return {
         "result": sum(checks.values()),
         "threshold": len(checks),
-        "method": "Pinned API, provenance, refusal, deterministic-seed, and public-artifact replay.",
+        "method": "Pinned API, provenance, refusal, deterministic-seed, full-population, and public-artifact replay.",
         "decision": "pass" if all(checks.values()) else "fail",
         "checks": checks,
         "forbidden_artifacts": public_forbidden,
-        "limitation": "This local gate does not authorize deployment or establish duration prediction readiness.",
+        "limitation": "This local gate does not establish authenticated hosted operation or duration prediction readiness.",
     }
 
 

@@ -29,6 +29,76 @@ export type Benchmark = {
   limitation: string;
 };
 
+export type District = {
+  district_code: string;
+  court_id: string;
+  ao_label: string;
+};
+
+export type PortfolioSlice = {
+  district_code: string | null;
+  nature_family: string | null;
+  total_records: number;
+  collision_free_records: number;
+  pending_records: number;
+  terminated_records: number;
+  matched_records: number;
+  supported_nature_records: number;
+  pending_share: number;
+  match_coverage: number;
+  duration_support_count: number | null;
+  observed_terminations: number | null;
+  censored_records: number | null;
+  average_observed_duration_days: number | null;
+};
+
+export type FilingPoint = {
+  filing_year: number;
+  district_code: string | null;
+  nature_family: string | null;
+  cohort_records: number;
+  observed_terminations: number;
+  pending_records: number;
+  matched_records: number;
+  followup_days: number;
+};
+
+export type PendingAgePoint = {
+  age_band: string;
+  district_code: string | null;
+  nature_family: string | null;
+  pending_records: number;
+  matched_pending_records: number;
+  average_age_days: number;
+};
+
+export type PopulationExplorer = {
+  schema_version: "1";
+  source_snapshot: string;
+  population: {
+    statistical_records: number;
+    pending_records: number;
+    collision_free_records: number;
+    matched_records: number;
+  };
+  publication_policy: {
+    full_population_used: true;
+    matter_level_rows: 0;
+    minimum_support: number;
+    smallest_grain_cells: Record<string, { available: number; published: number }>;
+    limitation: string;
+  };
+  dimensions: {
+    districts: District[];
+    nature_families: string[];
+    filing_years: number[];
+    age_bands: string[];
+  };
+  portfolio_slices: PortfolioSlice[];
+  filing_series: FilingPoint[];
+  pending_age_series: PendingAgePoint[];
+};
+
 export type Milestones = {
   status: "event_unavailable";
   event_updates_enabled: false;
@@ -75,6 +145,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
 const remoteApi = {
   readiness: () => request<Readiness>("/v1/readiness"),
   portfolio: () => request<Portfolio>("/v1/portfolio"),
+  explorer: () => request<PopulationExplorer>("/v1/population-explorer"),
   milestones: () => request<Milestones>("/v1/milestones/availability"),
   provenance: () => request<Provenance>("/v1/provenance"),
   benchmark: (cohort: string) =>
@@ -90,6 +161,8 @@ const remoteApi = {
       body: JSON.stringify(body),
     }),
 };
+
+const fullPopulationUrl = new URL("./full-population.v1.json", import.meta.url).href;
 
 const cohorts: Record<string, [number, number, number, number]> = {
   ordinary_original: [2_503_909, 0.6679, 0.8456, 0.0165],
@@ -119,6 +192,7 @@ const staticApi = {
     recap_match_coverage: 2_065_537 / 4_645_719,
     interpretation: "Observed nationwide public court metadata; not a duration forecast.",
   }),
+  explorer: async (): Promise<PopulationExplorer> => request<PopulationExplorer>(fullPopulationUrl),
   milestones: async (): Promise<Milestones> => ({
     status: "event_unavailable",
     event_updates_enabled: false,
@@ -128,7 +202,7 @@ const staticApi = {
     limitation: "No docket event is inferred from fields that are not present.",
   }),
   provenance: async (): Promise<Provenance> => ({
-    release_version: "1",
+    release_version: "2",
     fjc_snapshot: "2026-03-31",
     recap_snapshot: "2026-06-30",
     development_outcomes_end: "2024-03-31",

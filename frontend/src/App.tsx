@@ -8,11 +8,19 @@ import {
   api,
   type Benchmark,
   type Milestones,
+  type PopulationExplorer as PopulationExplorerData,
   type Portfolio,
   type Provenance,
   type Readiness,
   type Scenario,
 } from "./api";
+import { PopulationExplorer } from "./PopulationExplorer";
+import {
+  type PopulationFilters,
+  selectFilingSeries,
+  selectPendingAgeSeries,
+  selectPortfolioSlice,
+} from "./population";
 
 echarts.use([BarChart, GridComponent, TooltipComponent, SVGRenderer]);
 
@@ -24,6 +32,16 @@ const cohorts = [
 ] as const;
 
 type Workspace = "portfolio" | "planner";
+
+const initialParameters = new URLSearchParams(window.location.search);
+const initialWorkspace: Workspace = initialParameters.get("view") === "planner" ? "planner" : "portfolio";
+const initialCohort = cohorts.some(([value]) => value === initialParameters.get("cohort"))
+  ? initialParameters.get("cohort") ?? "ordinary_original"
+  : "ordinary_original";
+const initialPopulationFilters: PopulationFilters = {
+  districtCode: initialParameters.get("district") ?? "all",
+  natureFamily: initialParameters.get("nature") ?? "all",
+};
 
 function percent(value: number, digits = 1) {
   return new Intl.NumberFormat("en-US", {
@@ -189,24 +207,34 @@ function ScenarioWorkbench() {
 }
 
 function App() {
-  const [workspace, setWorkspace] = useState<Workspace>("portfolio");
+  const [workspace, setWorkspace] = useState<Workspace>(initialWorkspace);
   const [readiness, setReadiness] = useState<Readiness | null>(null);
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
+  const [explorer, setExplorer] = useState<PopulationExplorerData | null>(null);
   const [benchmark, setBenchmark] = useState<Benchmark | null>(null);
   const [milestones, setMilestones] = useState<Milestones | null>(null);
   const [provenance, setProvenance] = useState<Provenance | null>(null);
-  const [cohort, setCohort] = useState("ordinary_original");
+  const [cohort, setCohort] = useState(initialCohort);
+  const [populationFilters, setPopulationFilters] = useState<PopulationFilters>(initialPopulationFilters);
   const [error, setError] = useState("");
   const [requestKey, setRequestKey] = useState(0);
 
   useEffect(() => {
     let active = true;
     setError("");
-    Promise.all([api.readiness(), api.portfolio(), api.benchmark(cohort), api.milestones(), api.provenance()])
-      .then(([nextReadiness, nextPortfolio, nextBenchmark, nextMilestones, nextProvenance]) => {
+    Promise.all([
+      api.readiness(),
+      api.portfolio(),
+      api.explorer(),
+      api.benchmark(cohort),
+      api.milestones(),
+      api.provenance(),
+    ])
+      .then(([nextReadiness, nextPortfolio, nextExplorer, nextBenchmark, nextMilestones, nextProvenance]) => {
         if (!active) return;
         setReadiness(nextReadiness);
         setPortfolio(nextPortfolio);
+        setExplorer(nextExplorer);
         setBenchmark(nextBenchmark);
         setMilestones(nextMilestones);
         setProvenance(nextProvenance);
@@ -219,8 +247,47 @@ function App() {
     };
   }, [cohort, requestKey]);
 
+  useEffect(() => {
+    if (!explorer) return;
+    const districtValid = populationFilters.districtCode === "all"
+      || explorer.dimensions.districts.some((item) => item.district_code === populationFilters.districtCode);
+    const natureValid = populationFilters.natureFamily === "all"
+      || explorer.dimensions.nature_families.includes(populationFilters.natureFamily);
+    if (!districtValid || !natureValid) {
+      setPopulationFilters({
+        districtCode: districtValid ? populationFilters.districtCode : "all",
+        natureFamily: natureValid ? populationFilters.natureFamily : "all",
+      });
+    }
+  }, [explorer, populationFilters]);
+
+  useEffect(() => {
+    const parameters = new URLSearchParams();
+    if (workspace !== "portfolio") parameters.set("view", workspace);
+    if (populationFilters.districtCode !== "all") parameters.set("district", populationFilters.districtCode);
+    if (populationFilters.natureFamily !== "all") parameters.set("nature", populationFilters.natureFamily);
+    if (cohort !== "ordinary_original") parameters.set("cohort", cohort);
+    const query = parameters.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
+  }, [cohort, populationFilters, workspace]);
+
   function exportView() {
-    const blob = new Blob([JSON.stringify({ portfolio, benchmark, milestones, provenance }, null, 2)], {
+    const selectedSlice = explorer ? selectPortfolioSlice(explorer, populationFilters) : undefined;
+    const selectedFilings = explorer ? selectFilingSeries(explorer, populationFilters) : [];
+    const selectedPendingAge = explorer ? selectPendingAgeSeries(explorer, populationFilters) : [];
+    const blob = new Blob([JSON.stringify({
+      schema_version: explorer?.schema_version,
+      source_snapshot: explorer?.source_snapshot,
+      filters: populationFilters,
+      portfolio,
+      selected_slice: selectedSlice,
+      filing_series: selectedFilings,
+      pending_age_series: selectedPendingAge,
+      benchmark,
+      milestones,
+      provenance,
+      publication_policy: explorer?.publication_policy,
+    }, null, 2)], {
       type: "application/json",
     });
     const link = document.createElement("a");
@@ -241,7 +308,7 @@ function App() {
     );
   }
 
-  if (!readiness || !portfolio || !benchmark || !milestones || !provenance) {
+  if (!readiness || !portfolio || !explorer || !benchmark || !milestones || !provenance) {
     return (
       <main className="loading-state" aria-busy="true">
         <span className="loading-line" />
@@ -260,8 +327,8 @@ function App() {
           <div><strong>Federal Civil Operations</strong><span>Public metadata planning instrument</span></div>
         </div>
         <nav aria-label="Workspace">
-          <button className={workspace === "portfolio" ? "active" : ""} onClick={() => setWorkspace("portfolio")}>Portfolio</button>
-          <button className={workspace === "planner" ? "active" : ""} onClick={() => setWorkspace("planner")}>Matter planner</button>
+          <button aria-pressed={workspace === "portfolio"} className={workspace === "portfolio" ? "active" : ""} onClick={() => setWorkspace("portfolio")}>Portfolio</button>
+          <button aria-pressed={workspace === "planner"} className={workspace === "planner" ? "active" : ""} onClick={() => setWorkspace("planner")}>Matter planner</button>
         </nav>
         <button className="export-action" onClick={exportView}>Export evidence</button>
       </header>
@@ -287,6 +354,12 @@ function App() {
                 <Metric label="Collision-free cases" value={number(portfolio.collision_free_cases)} note="Case-level analytics boundary" />
                 <Metric label="Reviewed RECAP matches" value={number(portfolio.promoted_recap_matches)} note={`${percent(portfolio.recap_match_coverage)} collision-free coverage`} />
               </div>
+
+              <PopulationExplorer
+                explorer={explorer}
+                filters={populationFilters}
+                onFiltersChange={setPopulationFilters}
+              />
 
               <section className="benchmark-section" aria-labelledby="benchmark-title">
                 <div className="section-heading">

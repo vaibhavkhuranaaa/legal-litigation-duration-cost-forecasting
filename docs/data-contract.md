@@ -39,3 +39,13 @@ Each event includes canonical case key, event family, date, RECAP docket entry I
 ## Seeded demo
 
 Release artifact contains deidentified opaque keys, bounded analytical fields, precomputed outputs, metric metadata, and provenance summaries. It contains no raw docket number, PACER identifier, case name, party, attorney, judge, document text, cloud credential, or BigQuery access path.
+
+## Public population cube
+
+The version-1 cube is generated deterministically from the complete M6 portfolio, filing-cohort,
+pending-inventory, and duration-summary marts. Exact national and one-dimensional aggregates retain
+all 5,008,334 statistical records and all 457,327 pending records. District-by-nature, annual filing,
+and pending-age cells publish only at support of at least 200. The schema allowlists aggregate
+dimensions and additive measures; case identifiers, source identifiers, docket values, exact dates,
+names, and document text are prohibited. Observed-duration averages use terminated cases only and
+remain descriptive rather than censoring-aware estimates.

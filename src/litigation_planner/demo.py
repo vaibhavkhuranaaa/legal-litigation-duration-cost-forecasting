@@ -6,7 +6,7 @@ import sqlite3
 from pathlib import Path
 
 PORTFOLIO = ("2026-03-31", 5_008_334, 457_327, 4_645_719, 2_065_537)
-RELEASE_SCHEMA_VERSION = "1"
+RELEASE_SCHEMA_VERSION = "2"
 COHORTS = {
     "ordinary_original": (2_503_909, 0.6679, 0.8456, 0.0165),
     "multidistrict_litigation": (767_685, 0.2320, 0.3748, 0.1578),

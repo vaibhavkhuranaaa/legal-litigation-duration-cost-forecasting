@@ -58,6 +58,19 @@ def test_benchmark_is_observed_not_predictive() -> None:
     assert "not a matter-specific prediction" in response.json()["limitation"]
 
 
+def test_population_explorer_uses_full_population_without_matter_rows() -> None:
+    response = client.get("/v1/population-explorer")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["population"]["statistical_records"] == 5_008_334
+    assert body["population"]["pending_records"] == 457_327
+    assert body["publication_policy"]["full_population_used"] is True
+    assert body["publication_policy"]["matter_level_rows"] == 0
+    assert len(body["dimensions"]["districts"]) == 94
+    assert len(body["dimensions"]["nature_families"]) == 14
+
+
 def test_scenario_contract_is_synthetic() -> None:
     response = client.post(
         "/v1/scenarios",

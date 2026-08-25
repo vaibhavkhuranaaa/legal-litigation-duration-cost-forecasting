@@ -22,13 +22,15 @@ COPY src/litigation_planner/milestones.py ./src/litigation_planner/milestones.py
 COPY src/litigation_planner/scenarios.py ./src/litigation_planner/scenarios.py
 COPY scripts/build_demo_seed.py ./scripts/build_demo_seed.py
 COPY --from=frontend /web/dist ./frontend/dist
+COPY frontend/src/full-population.v1.json ./release/full-population.json
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PATH="/app/.venv/bin:$PATH" \
     PYTHONPATH=/app/src \
     DEMO_DB_PATH=/app/release/demo.sqlite \
+    POPULATION_CUBE_PATH=/app/release/full-population.json \
     STATIC_DIR=/app/frontend/dist
-RUN mkdir /app/release && .venv/bin/python scripts/build_demo_seed.py --output /app/release/demo.sqlite \
+RUN .venv/bin/python scripts/build_demo_seed.py --output /app/release/demo.sqlite \
     && chown -R planner:planner /app/release
 USER planner
 EXPOSE 8080

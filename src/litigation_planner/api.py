@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
@@ -25,6 +26,10 @@ RELEASE_VERSION = RELEASE_SCHEMA_VERSION
 SOURCE_CUTOFF = "2026-03-31"
 DEVELOPMENT_CUTOFF = "2024-03-31"
 DEMO_DB_PATH = os.environ.get("DEMO_DB_PATH")
+POPULATION_CUBE_PATH = os.environ.get(
+    "POPULATION_CUBE_PATH",
+    str(Path(__file__).resolve().parents[2] / "frontend/src/full-population.v1.json"),
+)
 INDIVIDUAL_FAILURES = (
     "baseline.calibration_730d.failed",
     "baseline.supported_slice_calibration.failed",
@@ -81,6 +86,87 @@ class BenchmarkResponse(BaseModel):
     snapshot_censored_share: float
     outcomes_through: str
     limitation: str
+
+
+class DistrictDimension(BaseModel):
+    district_code: str
+    court_id: str
+    ao_label: str
+
+
+class PopulationSummary(BaseModel):
+    statistical_records: int
+    pending_records: int
+    collision_free_records: int
+    matched_records: int
+
+
+class PublishedCellCounts(BaseModel):
+    available: int
+    published: int
+
+
+class PublicationPolicy(BaseModel):
+    full_population_used: Literal[True]
+    matter_level_rows: Literal[0]
+    minimum_support: int
+    smallest_grain_cells: dict[str, PublishedCellCounts]
+    limitation: str
+
+
+class ExplorerDimensions(BaseModel):
+    districts: list[DistrictDimension]
+    nature_families: list[str]
+    filing_years: list[int]
+    age_bands: list[str]
+
+
+class PortfolioSlice(BaseModel):
+    district_code: str | None
+    nature_family: str | None
+    total_records: int
+    collision_free_records: int
+    pending_records: int
+    terminated_records: int
+    matched_records: int
+    supported_nature_records: int
+    pending_share: float
+    match_coverage: float
+    duration_support_count: int | None
+    observed_terminations: int | None
+    censored_records: int | None
+    average_observed_duration_days: float | None
+
+
+class FilingPoint(BaseModel):
+    filing_year: int
+    district_code: str | None
+    nature_family: str | None
+    cohort_records: int
+    observed_terminations: int
+    pending_records: int
+    matched_records: int
+    followup_days: int
+
+
+class PendingAgePoint(BaseModel):
+    age_band: str
+    district_code: str | None
+    nature_family: str | None
+    pending_records: int
+    matched_pending_records: int
+    average_age_days: float
+
+
+class PopulationExplorerResponse(BaseModel):
+    schema_version: Literal["1"]
+    source_snapshot: str
+    population: PopulationSummary
+    publication_policy: PublicationPolicy
+    dimensions: ExplorerDimensions
+    portfolio_slices: list[PortfolioSlice]
+    filing_series: list[FilingPoint]
+    pending_age_series: list[PendingAgePoint]
 
 
 class ForecastRequest(BaseModel):
@@ -150,7 +236,7 @@ class ProvenanceResponse(BaseModel):
 
 app = FastAPI(
     title="Federal Civil Litigation Operations Planner",
-    version="1.0.0",
+    version="1.1.0",
 )
 app.add_middleware(AdmissionControlMiddleware)
 
@@ -218,6 +304,16 @@ def portfolio() -> PortfolioResponse:
         recap_match_coverage=matches / collision_free,
         interpretation="Observed nationwide public court metadata; not a duration forecast.",
     )
+
+
+@lru_cache(maxsize=1)
+def _population_explorer() -> PopulationExplorerResponse:
+    return PopulationExplorerResponse.model_validate_json(Path(POPULATION_CUBE_PATH).read_text())
+
+
+@app.get("/v1/population-explorer", response_model=PopulationExplorerResponse)
+def population_explorer() -> PopulationExplorerResponse:
+    return _population_explorer()
 
 
 @app.post("/v1/benchmarks", response_model=BenchmarkResponse)
