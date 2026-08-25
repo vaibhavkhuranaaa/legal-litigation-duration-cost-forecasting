@@ -1,20 +1,16 @@
-import { BarChart } from "echarts/charts";
-import { GridComponent, TooltipComponent } from "echarts/components";
-import * as echarts from "echarts/core";
-import { SVGRenderer } from "echarts/renderers";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 
+import { AnalyticsDashboard, type RankingMode } from "./AnalyticsDashboard";
 import {
   api,
   type Benchmark,
   type Milestones,
-  type PopulationExplorer as PopulationExplorerData,
+  type PopulationExplorer,
   type Portfolio,
   type Provenance,
   type Readiness,
   type Scenario,
 } from "./api";
-import { PopulationExplorer } from "./PopulationExplorer";
 import {
   type PopulationFilters,
   selectFilingSeries,
@@ -22,130 +18,35 @@ import {
   selectPortfolioSlice,
 } from "./population";
 
-echarts.use([BarChart, GridComponent, TooltipComponent, SVGRenderer]);
+const cohortOptions = [
+  "ordinary_original",
+  "multidistrict_litigation",
+  "other_procedural_origin",
+  "social_security_review",
+];
 
-const cohorts = [
-  ["ordinary_original", "Ordinary original"],
-  ["multidistrict_litigation", "Multidistrict litigation"],
-  ["other_procedural_origin", "Other procedural origin"],
-  ["social_security_review", "Social Security review"],
-] as const;
-
-type Workspace = "portfolio" | "planner";
+type Workspace = "dashboard" | "scenario";
+type NavigationSection = "overview" | "workload" | "aging" | "cohorts" | "quality" | "scenario" | "methods";
 
 const initialParameters = new URLSearchParams(window.location.search);
-const initialWorkspace: Workspace = initialParameters.get("view") === "planner" ? "planner" : "portfolio";
-const initialCohort = cohorts.some(([value]) => value === initialParameters.get("cohort"))
+const initialWorkspace: Workspace = ["planner", "scenario"].includes(initialParameters.get("view") ?? "") ? "scenario" : "dashboard";
+const initialCohort = cohortOptions.includes(initialParameters.get("cohort") ?? "")
   ? initialParameters.get("cohort") ?? "ordinary_original"
   : "ordinary_original";
 const initialPopulationFilters: PopulationFilters = {
   districtCode: initialParameters.get("district") ?? "all",
   natureFamily: initialParameters.get("nature") ?? "all",
 };
+const initialRankingMode: RankingMode = initialParameters.get("rank") === "nature" ? "nature" : "district";
 
-function percent(value: number, digits = 1) {
-  return new Intl.NumberFormat("en-US", {
-    style: "percent",
-    maximumFractionDigits: digits,
-  }).format(value);
-}
+const integer = new Intl.NumberFormat("en-US");
+const currency = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
 
-function number(value: number) {
-  return new Intl.NumberFormat("en-US").format(value);
-}
-
-function currency(value: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(value);
-}
-
-function BenchmarkChart({ benchmark }: { benchmark: Benchmark }) {
-  const target = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!target.current) return;
-    const chart = echarts.init(target.current, undefined, { renderer: "svg" });
-    chart.setOption({
-      animationDuration: 500,
-      animationEasing: "cubicOut",
-      grid: { left: 8, right: 24, top: 20, bottom: 8, containLabel: true },
-      xAxis: {
-        type: "value",
-        min: 0,
-        max: 1,
-        axisLabel: { formatter: (value: number) => `${Math.round(value * 100)}%`, color: "#475569" },
-        splitLine: { lineStyle: { color: "#dfe5e8" } },
-      },
-      yAxis: {
-        type: "category",
-        data: ["365 days", "730 days"],
-        axisLine: { show: false },
-        axisTick: { show: false },
-        axisLabel: { color: "#17202a", fontWeight: 600 },
-      },
-      tooltip: { trigger: "axis", valueFormatter: (value: number) => percent(value) },
-      series: [
-        {
-          type: "bar",
-          data: [benchmark.termination_365_day_share, benchmark.termination_730_day_share],
-          barWidth: 24,
-          itemStyle: { color: "#087e8b", borderRadius: [0, 4, 4, 0] },
-          label: { show: true, position: "right", formatter: ({ value }: { value: number }) => percent(value) },
-        },
-      ],
-    });
-    const observer = new ResizeObserver(() => chart.resize());
-    observer.observe(target.current);
-    return () => {
-      observer.disconnect();
-      chart.dispose();
-    };
-  }, [benchmark]);
-
-  return (
-    <div
-      ref={target}
-      className="benchmark-chart"
-      role="img"
-      aria-label={`${percent(benchmark.termination_365_day_share)} terminated within 365 days and ${percent(benchmark.termination_730_day_share)} within 730 days among ${number(benchmark.cases)} observed ${benchmark.cohort.replaceAll("_", " ")} cases.`}
-    />
-  );
-}
-
-function CapabilityRibbon({ readiness }: { readiness: Readiness }) {
-  const capabilities = [
-    ["Observed portfolio", readiness.operations_analytics, "ready"],
-    ["Duration forecast", readiness.duration_forecast, "blocked"],
-    ["Docket events", readiness.milestone_events, "blocked"],
-    ["Synthetic scenarios", readiness.scenario_engine, "ready"],
-  ];
-  return (
-    <section className="capability-ribbon" aria-label="Capability readiness">
-      {capabilities.map(([label, value, tone]) => (
-        <div className="capability" key={label}>
-          <span className={`status-mark ${tone}`} aria-hidden="true" />
-          <span>{label}</span>
-          <strong>{value}</strong>
-        </div>
-      ))}
-    </section>
-  );
-}
-
-function Metric({ label, value, note }: { label: string; value: string; note: string }) {
-  return (
-    <div className="metric">
-      <span>{label}</span>
-      <strong>{value}</strong>
-      <small>{note}</small>
-    </div>
-  );
-}
-
-function ScenarioWorkbench() {
+function ScenarioWorkbench({ onBack }: { onBack: () => void }) {
   const [scenario, setScenario] = useState<Scenario | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -167,42 +68,65 @@ function ScenarioWorkbench() {
   }
 
   return (
-    <section className="scenario-workbench" aria-labelledby="scenario-title">
-      <div className="section-heading">
+    <div className="scenario-lab">
+      <section className="scenario-heading">
         <div>
-          <p className="kicker synthetic">Synthetic planning</p>
-          <h2 id="scenario-title">Test resource assumptions</h2>
+          <button className="text-action" type="button" onClick={onBack}>Back to portfolio intelligence</button>
+          <h1>Synthetic resource sensitivity</h1>
+          <p>Translate explicit workload, time, effort, and rate assumptions into low, base, and high staffing cases. No observed legal-cost data or duration prediction is used.</p>
         </div>
-        <span className="evidence-tag synthetic">No observed cost data</span>
+        <div className="scenario-boundary"><span>Evidence class</span><strong>Synthetic assumptions</strong><small>Decision aid, not a forecast</small></div>
+      </section>
+
+      <div className="scenario-layout">
+        <section className="scenario-inputs" aria-labelledby="scenario-input-title">
+          <div className="panel-heading"><div><h2 id="scenario-input-title">Assumptions</h2><p>All values are bounded by the release contract.</p></div></div>
+          <form onSubmit={submit}>
+            <label>Matters<input name="matters" type="number" min="1" max="10000" defaultValue="25" required /></label>
+            <label>Planning horizon, months<input name="horizon_months" type="number" min="1" max="60" defaultValue="12" required /></label>
+            <label>Attorney hours per matter-month<input name="attorney_hours_per_matter_month" type="number" min="0" max="500" step="0.5" defaultValue="4" required /></label>
+            <label>Paralegal hours per matter-month<input name="paralegal_hours_per_matter_month" type="number" min="0" max="500" step="0.5" defaultValue="6" required /></label>
+            <label>Synthetic attorney rate, USD<input name="attorney_rate_usd" type="number" min="0" max="5000" defaultValue="350" required /></label>
+            <label>Synthetic paralegal rate, USD<input name="paralegal_rate_usd" type="number" min="0" max="5000" defaultValue="150" required /></label>
+            <button className="button-primary scenario-submit" type="submit" disabled={pending}>{pending ? "Calculating sensitivity" : "Calculate sensitivity"}</button>
+          </form>
+          {error && <p className="inline-error" role="alert">{error}. Verify the API and try again.</p>}
+        </section>
+
+        <section className="scenario-output" aria-labelledby="scenario-output-title">
+          <div className="panel-heading"><div><h2 id="scenario-output-title">Sensitivity cases</h2><p>Base assumptions are multiplied by 0.80, 1.00, and 1.25.</p></div><span>Productive capacity: 120 hours per FTE-month</span></div>
+          {!scenario && !error && (
+            <div className="scenario-empty">
+              <strong>Ready for assumptions</strong>
+              <p>Calculate once to compare staffing capacity and synthetic budget exposure across all three cases.</p>
+            </div>
+          )}
+          {scenario && (
+            <div className="scenario-results" aria-live="polite">
+              <div className="table-wrap"><table>
+                <thead><tr><th scope="col">Case</th><th scope="col">Attorney FTE</th><th scope="col">Paralegal FTE</th><th scope="col">Attorney hours</th><th scope="col">Paralegal hours</th><th scope="col">Synthetic budget</th></tr></thead>
+                <tbody>{scenario.cases.map((item) => (
+                  <tr key={item.name} className={item.name === "base" ? "selected-row" : ""}>
+                    <th scope="row">{item.name}</th>
+                    <td>{item.attorney_fte.toFixed(2)}</td>
+                    <td>{item.paralegal_fte.toFixed(2)}</td>
+                    <td>{integer.format(item.attorney_hours)}</td>
+                    <td>{integer.format(item.paralegal_hours)}</td>
+                    <td>{currency.format(item.budget_usd)}</td>
+                  </tr>
+                ))}</tbody>
+              </table></div>
+              <div className="scenario-summary">
+                <div><span>Observed cost records</span><strong>0</strong></div>
+                <div><span>Scenario method</span><strong>Deterministic</strong></div>
+                <div><span>Forecast output</span><strong>None</strong></div>
+              </div>
+              <p className="panel-footnote">{scenario.limitation}</p>
+            </div>
+          )}
+        </section>
       </div>
-      <form onSubmit={submit}>
-        <label>Matters<input name="matters" type="number" min="1" max="10000" defaultValue="25" required /></label>
-        <label>Months<input name="horizon_months" type="number" min="1" max="60" defaultValue="12" required /></label>
-        <label>Attorney hours / matter / month<input name="attorney_hours_per_matter_month" type="number" min="0" max="500" step="0.5" defaultValue="4" required /></label>
-        <label>Paralegal hours / matter / month<input name="paralegal_hours_per_matter_month" type="number" min="0" max="500" step="0.5" defaultValue="6" required /></label>
-        <label>Attorney rate, synthetic USD<input name="attorney_rate_usd" type="number" min="0" max="5000" defaultValue="350" required /></label>
-        <label>Paralegal rate, synthetic USD<input name="paralegal_rate_usd" type="number" min="0" max="5000" defaultValue="150" required /></label>
-        <button className="primary-action" type="submit" disabled={pending}>
-          {pending ? "Calculating..." : "Calculate scenario"}
-        </button>
-      </form>
-      {error && <p className="inline-error" role="alert">{error}. Check API and retry.</p>}
-      {!scenario && !error && <p className="empty-state">Enter assumptions to compare low, base, and high sensitivity cases.</p>}
-      {scenario && (
-        <div className="scenario-result" aria-live="polite">
-          <div className="scenario-cases">
-            {scenario.cases.map((item) => (
-              <article key={item.name}>
-                <span>{item.name}</span>
-                <strong>{currency(item.budget_usd)}</strong>
-                <p>{item.attorney_fte} attorney FTE · {item.paralegal_fte} paralegal FTE</p>
-              </article>
-            ))}
-          </div>
-          <p className="limitation">{scenario.limitation}</p>
-        </div>
-      )}
-    </section>
+    </div>
   );
 }
 
@@ -210,12 +134,15 @@ function App() {
   const [workspace, setWorkspace] = useState<Workspace>(initialWorkspace);
   const [readiness, setReadiness] = useState<Readiness | null>(null);
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
-  const [explorer, setExplorer] = useState<PopulationExplorerData | null>(null);
+  const [explorer, setExplorer] = useState<PopulationExplorer | null>(null);
   const [benchmark, setBenchmark] = useState<Benchmark | null>(null);
   const [milestones, setMilestones] = useState<Milestones | null>(null);
   const [provenance, setProvenance] = useState<Provenance | null>(null);
   const [cohort, setCohort] = useState(initialCohort);
   const [populationFilters, setPopulationFilters] = useState<PopulationFilters>(initialPopulationFilters);
+  const [rankingMode, setRankingMode] = useState<RankingMode>(initialRankingMode);
+  const [activeSection, setActiveSection] = useState<NavigationSection>(initialWorkspace === "scenario" ? "scenario" : "overview");
+  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [error, setError] = useState("");
   const [requestKey, setRequestKey] = useState(0);
 
@@ -223,12 +150,7 @@ function App() {
     let active = true;
     setError("");
     Promise.all([
-      api.readiness(),
-      api.portfolio(),
-      api.explorer(),
-      api.benchmark(cohort),
-      api.milestones(),
-      api.provenance(),
+      api.readiness(), api.portfolio(), api.explorer(), api.benchmark(cohort), api.milestones(), api.provenance(),
     ])
       .then(([nextReadiness, nextPortfolio, nextExplorer, nextBenchmark, nextMilestones, nextProvenance]) => {
         if (!active) return;
@@ -242,43 +164,40 @@ function App() {
       .catch((reason: unknown) => {
         if (active) setError(reason instanceof Error ? reason.message : "Data request failed");
       });
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, [cohort, requestKey]);
 
   useEffect(() => {
     if (!explorer) return;
-    const districtValid = populationFilters.districtCode === "all"
-      || explorer.dimensions.districts.some((item) => item.district_code === populationFilters.districtCode);
-    const natureValid = populationFilters.natureFamily === "all"
-      || explorer.dimensions.nature_families.includes(populationFilters.natureFamily);
+    const districtValid = populationFilters.districtCode === "all" || explorer.dimensions.districts.some((item) => item.district_code === populationFilters.districtCode);
+    const natureValid = populationFilters.natureFamily === "all" || explorer.dimensions.nature_families.includes(populationFilters.natureFamily);
     if (!districtValid || !natureValid) {
-      setPopulationFilters({
-        districtCode: districtValid ? populationFilters.districtCode : "all",
-        natureFamily: natureValid ? populationFilters.natureFamily : "all",
-      });
+      setPopulationFilters({ districtCode: districtValid ? populationFilters.districtCode : "all", natureFamily: natureValid ? populationFilters.natureFamily : "all" });
     }
   }, [explorer, populationFilters]);
 
   useEffect(() => {
     const parameters = new URLSearchParams();
-    if (workspace !== "portfolio") parameters.set("view", workspace);
+    if (workspace === "scenario") parameters.set("view", "scenario");
     if (populationFilters.districtCode !== "all") parameters.set("district", populationFilters.districtCode);
     if (populationFilters.natureFamily !== "all") parameters.set("nature", populationFilters.natureFamily);
     if (cohort !== "ordinary_original") parameters.set("cohort", cohort);
+    if (rankingMode === "nature") parameters.set("rank", "nature");
     const query = parameters.toString();
     window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
-  }, [cohort, populationFilters, workspace]);
+  }, [cohort, populationFilters, rankingMode, workspace]);
 
   function exportView() {
     const selectedSlice = explorer ? selectPortfolioSlice(explorer, populationFilters) : undefined;
     const selectedFilings = explorer ? selectFilingSeries(explorer, populationFilters) : [];
     const selectedPendingAge = explorer ? selectPendingAgeSeries(explorer, populationFilters) : [];
     const blob = new Blob([JSON.stringify({
+      dashboard_contract: "enterprise-analytics-v1",
       schema_version: explorer?.schema_version,
       source_snapshot: explorer?.source_snapshot,
       filters: populationFilters,
+      cohort,
+      ranking_dimension: rankingMode,
       portfolio,
       selected_slice: selectedSlice,
       filing_series: selectedFilings,
@@ -287,124 +206,81 @@ function App() {
       milestones,
       provenance,
       publication_policy: explorer?.publication_policy,
-    }, null, 2)], {
-      type: "application/json",
-    });
+    }, null, 2)], { type: "application/json" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "federal-civil-operations-view.json";
+    link.download = "federal-civil-portfolio-view.json";
     link.click();
     URL.revokeObjectURL(link.href);
   }
 
+  function openSection(id: string) {
+    setWorkspace("dashboard");
+    setActiveSection(id as NavigationSection);
+    setMobileMoreOpen(false);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" }), 0);
+  }
+
+  function openScenario() {
+    setWorkspace("scenario");
+    setActiveSection("scenario");
+    setMobileMoreOpen(false);
+  }
+
   if (error) {
-    return (
-      <main className="fatal-state">
-        <p className="kicker refusal">Connection error</p>
-        <h1>Operations data did not load</h1>
-        <p>{error}. Start the local API, then retry.</p>
-        <button className="primary-action" onClick={() => setRequestKey((value) => value + 1)}>Retry</button>
-      </main>
-    );
+    return <main className="fatal-state"><span>Connection error</span><h1>Portfolio evidence did not load</h1><p>{error}. Start the local API or refresh the static artifact, then retry.</p><button className="button-primary" type="button" onClick={() => setRequestKey((value) => value + 1)}>Retry data load</button></main>;
   }
 
   if (!readiness || !portfolio || !explorer || !benchmark || !milestones || !provenance) {
-    return (
-      <main className="loading-state" aria-busy="true">
-        <span className="loading-line" />
-        <span className="loading-line wide" />
-        <span className="loading-block" />
-        <p>Loading governed operations evidence...</p>
-      </main>
-    );
+    return <main className="loading-state" aria-busy="true"><span className="loading-line" /><span className="loading-line wide" /><span className="loading-block" /><p>Loading governed portfolio evidence</p></main>;
   }
 
   return (
-    <div className="app-shell">
-      <header className="product-header">
-        <div className="product-name">
-          <span className="product-symbol" aria-hidden="true">FC</span>
-          <div><strong>Federal Civil Operations</strong><span>Public metadata planning instrument</span></div>
-        </div>
-        <nav aria-label="Workspace">
-          <button aria-pressed={workspace === "portfolio"} className={workspace === "portfolio" ? "active" : ""} onClick={() => setWorkspace("portfolio")}>Portfolio</button>
-          <button aria-pressed={workspace === "planner"} className={workspace === "planner" ? "active" : ""} onClick={() => setWorkspace("planner")}>Matter planner</button>
+    <div className="enterprise-shell">
+      <aside className="side-navigation">
+        <div className="brand-block"><span className="brand-mark" aria-hidden="true">FC</span><div><strong>Federal Civil</strong><span>Portfolio Intelligence</span></div></div>
+        <nav aria-label="Analytics navigation">
+          <button type="button" className={activeSection === "overview" ? "active" : ""} aria-current={activeSection === "overview" ? "page" : undefined} onClick={() => openSection("overview")}><span>Overview</span><small>National scope</small></button>
+          <button type="button" className={activeSection === "workload" ? "active" : ""} aria-current={activeSection === "workload" ? "page" : undefined} onClick={() => openSection("workload")}><span>Workload</span><small>Trend and rank</small></button>
+          <button type="button" className={activeSection === "aging" ? "active" : ""} aria-current={activeSection === "aging" ? "page" : undefined} onClick={() => openSection("aging")}><span>Pending age</span><small>Inventory pressure</small></button>
+          <button type="button" className={activeSection === "cohorts" ? "active" : ""} aria-current={activeSection === "cohorts" ? "page" : undefined} onClick={() => openSection("cohorts")}><span>Cohorts</span><small>Observed outcomes</small></button>
+          <button className="mobile-more-trigger" type="button" aria-expanded={mobileMoreOpen} aria-controls="secondary-navigation" onClick={() => setMobileMoreOpen((value) => !value)}><span>More</span><small>More views</small></button>
+          <div className={`nav-more${mobileMoreOpen ? " open" : ""}`} id="secondary-navigation">
+            <button type="button" className={activeSection === "quality" ? "active" : ""} aria-current={activeSection === "quality" ? "page" : undefined} onClick={() => openSection("quality")}><span>Evidence</span><small>Coverage and limits</small></button>
+            <button type="button" className={activeSection === "scenario" ? "active" : ""} aria-current={activeSection === "scenario" ? "page" : undefined} onClick={openScenario}><span>Scenario lab</span><small>Synthetic sensitivity</small></button>
+            <button type="button" className={activeSection === "methods" ? "active" : ""} aria-current={activeSection === "methods" ? "page" : undefined} onClick={() => openSection("methods")}><span>Methods</span><small>Source and policy</small></button>
+          </div>
         </nav>
-        <button className="export-action" onClick={exportView}>Export evidence</button>
-      </header>
+        <div className="side-status"><span><i className="status-dot" />Analytics ready</span><span><i className="status-dot unavailable" />Forecast unavailable</span><small>Snapshot {explorer.source_snapshot}</small></div>
+      </aside>
 
-      <CapabilityRibbon readiness={readiness} />
+      <main className="product-workspace">
+        <header className="workspace-bar">
+          <div><strong>{workspace === "dashboard" ? "Portfolio overview" : "Scenario lab"}</strong><span>Full population / governed aggregates</span></div>
+          <div className="workspace-actions"><span className="release-state">Contract v{provenance.release_version}</span>{workspace === "dashboard" && <button className="button-secondary" type="button" onClick={exportView}>Export evidence</button>}</div>
+        </header>
 
-      <main>
-        {workspace === "portfolio" ? (
-          <div className="workspace-grid">
-            <section className="evidence-field" aria-labelledby="portfolio-title">
-              <div className="opening-statement">
-                <div>
-                  <p className="kicker observed">Observed portfolio</p>
-                  <h1 id="portfolio-title">Nationwide workload, with failed capabilities left visible.</h1>
-                  <p>{portfolio.interpretation}</p>
-                </div>
-                <div className="snapshot-stamp"><span>FJC snapshot</span><strong>{portfolio.source_snapshot}</strong><small>Nationwide civil records from 2010</small></div>
-              </div>
+        {workspace === "dashboard" ? (
+          <AnalyticsDashboard
+            readiness={readiness}
+            portfolio={portfolio}
+            explorer={explorer}
+            benchmark={benchmark}
+            milestones={milestones}
+            provenance={provenance}
+            filters={populationFilters}
+            cohort={cohort}
+            rankingMode={rankingMode}
+            onFiltersChange={setPopulationFilters}
+            onCohortChange={setCohort}
+            onRankingModeChange={setRankingMode}
+            onOpenScenario={openScenario}
+          />
+        ) : <ScenarioWorkbench onBack={() => openSection("overview")} />}
 
-              <div className="metric-band">
-                <Metric label="Statistical records" value={number(portfolio.statistical_records)} note="Complete governed population" />
-                <Metric label="Pending inventory" value={number(portfolio.pending_records)} note={`${percent(portfolio.pending_share)} of records`} />
-                <Metric label="Collision-free cases" value={number(portfolio.collision_free_cases)} note="Case-level analytics boundary" />
-                <Metric label="Reviewed RECAP matches" value={number(portfolio.promoted_recap_matches)} note={`${percent(portfolio.recap_match_coverage)} collision-free coverage`} />
-              </div>
-
-              <PopulationExplorer
-                explorer={explorer}
-                filters={populationFilters}
-                onFiltersChange={setPopulationFilters}
-              />
-
-              <section className="benchmark-section" aria-labelledby="benchmark-title">
-                <div className="section-heading">
-                  <div><p className="kicker observed">Observed benchmark</p><h2 id="benchmark-title">Administrative termination varies by procedural cohort</h2></div>
-                  <label className="cohort-control">Cohort<select value={cohort} onChange={(event) => setCohort(event.target.value)}>{cohorts.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
-                </div>
-                <div className="benchmark-layout">
-                  <BenchmarkChart benchmark={benchmark} />
-                  <div className="benchmark-notes">
-                    <span className="evidence-tag observed">{number(benchmark.cases)} cases</span>
-                    <dl><div><dt>Outcomes through</dt><dd>{benchmark.outcomes_through}</dd></div><div><dt>Snapshot censored</dt><dd>{percent(benchmark.snapshot_censored_share)}</dd></div></dl>
-                    <p>{benchmark.limitation}</p>
-                  </div>
-                </div>
-              </section>
-            </section>
-
-            <aside className="audit-rail" aria-labelledby="audit-title">
-              <p className="kicker">Audit rail</p><h2 id="audit-title">What this release knows</h2>
-              <dl>
-                <div><dt>FJC source</dt><dd>{provenance.fjc_snapshot}</dd></div>
-                <div><dt>RECAP source</dt><dd>{provenance.recap_snapshot}</dd></div>
-                <div><dt>Model</dt><dd>Failed, not promoted</dd></div>
-                <div><dt>Legal advice</dt><dd>No</dd></div>
-                <div><dt>Real cost forecast</dt><dd>No</dd></div>
-              </dl>
-              <div className="refusal-note"><strong>Duration forecast unavailable</strong><p>{readiness.reason}</p></div>
-              <div className="event-note"><strong>Docket events unavailable</strong><p>Missing {milestones.missing_event_fields.join(" and ")}. No event inferred.</p></div>
-            </aside>
-          </div>
-        ) : (
-          <div className="planner-grid">
-            <section className="planner-boundary">
-              <p className="kicker refusal">Forecast boundary</p>
-              <h1>Matter duration cannot be estimated at required reliability.</h1>
-              <p>No estimator passed every calibration and supported-slice gate. Use observed cohort benchmarks for context, then test your own resource assumptions.</p>
-              <div className="boundary-actions"><button onClick={() => setWorkspace("portfolio")}>View observed cohorts</button><a href="#scenario-title">Plan synthetic resources</a></div>
-              <small>Not legal advice. No predicted completion date is produced.</small>
-            </section>
-            <ScenarioWorkbench />
-          </div>
-        )}
+        <footer className="product-footer"><span>Observed public metadata and explicit capability boundaries</span><span>Not legal advice / no matter-level rows published</span></footer>
       </main>
-
-      <footer><span>Release contract v{provenance.release_version}</span><span>Observed metadata · explicit refusal · synthetic scenarios</span></footer>
     </div>
   );
 }
