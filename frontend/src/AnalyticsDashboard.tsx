@@ -1,7 +1,4 @@
-import { BarChart, LineChart } from "echarts/charts";
-import { GridComponent, TooltipComponent } from "echarts/components";
-import * as echarts from "echarts/core";
-import { SVGRenderer } from "echarts/renderers";
+import type { EChartsCoreOption, EChartsType } from "echarts/core";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import type {
@@ -23,9 +20,32 @@ import {
   titleCase,
 } from "./population";
 
-echarts.use([BarChart, LineChart, GridComponent, TooltipComponent, SVGRenderer]);
-
 const chartAnimationDuration = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 360;
+const loadChartEngine = () => import("./chart-engine").then(({ echarts }) => echarts);
+
+function mountChart(target: HTMLDivElement, option: EChartsCoreOption) {
+  let cancelled = false;
+  let chart: EChartsType | null = null;
+  let observer: ResizeObserver | null = null;
+  target.dataset.chartStatus = "loading";
+  void loadChartEngine()
+    .then((echarts) => {
+      if (cancelled) return;
+      chart = echarts.init(target, undefined, { renderer: "svg" });
+      chart.setOption(option);
+      observer = new ResizeObserver(() => chart?.resize());
+      observer.observe(target);
+      target.dataset.chartStatus = "ready";
+    })
+    .catch(() => {
+      if (!cancelled) target.dataset.chartStatus = "unavailable";
+    });
+  return () => {
+    cancelled = true;
+    observer?.disconnect();
+    chart?.dispose();
+  };
+}
 
 const cohorts = [
   ["ordinary_original", "Ordinary original"],
@@ -46,8 +66,7 @@ function FilingTrend({ explorer, filters }: { explorer: PopulationExplorer; filt
 
   useEffect(() => {
     if (!target.current || data.length === 0) return;
-    const chart = echarts.init(target.current, undefined, { renderer: "svg" });
-    chart.setOption({
+    return mountChart(target.current, {
       animationDuration: chartAnimationDuration(),
       animationEasing: "cubicOut",
       grid: { left: 8, right: 18, top: 24, bottom: 8, containLabel: true },
@@ -83,12 +102,6 @@ function FilingTrend({ explorer, filters }: { explorer: PopulationExplorer; filt
         connectNulls: false,
       }],
     });
-    const observer = new ResizeObserver(() => chart.resize());
-    observer.observe(target.current);
-    return () => {
-      observer.disconnect();
-      chart.dispose();
-    };
   }, [data, explorer.dimensions.filing_years, series]);
 
   const summary = series.map((row, index) => (
@@ -104,8 +117,7 @@ function PendingAge({ explorer, filters }: { explorer: PopulationExplorer; filte
 
   useEffect(() => {
     if (!target.current || data.length === 0) return;
-    const chart = echarts.init(target.current, undefined, { renderer: "svg" });
-    chart.setOption({
+    return mountChart(target.current, {
       animationDuration: chartAnimationDuration(),
       animationEasing: "cubicOut",
       grid: { left: 6, right: 28, top: 10, bottom: 6, containLabel: true },
@@ -144,12 +156,6 @@ function PendingAge({ explorer, filters }: { explorer: PopulationExplorer; filte
         },
       }],
     });
-    const observer = new ResizeObserver(() => chart.resize());
-    observer.observe(target.current);
-    return () => {
-      observer.disconnect();
-      chart.dispose();
-    };
   }, [data, explorer.dimensions.age_bands, series]);
 
   const summary = series.map((row, index) => (
@@ -163,8 +169,7 @@ function CohortBenchmark({ benchmark }: { benchmark: Benchmark }) {
 
   useEffect(() => {
     if (!target.current) return;
-    const chart = echarts.init(target.current, undefined, { renderer: "svg" });
-    chart.setOption({
+    return mountChart(target.current, {
       animationDuration: chartAnimationDuration(),
       animationEasing: "cubicOut",
       grid: { left: 4, right: 40, top: 8, bottom: 4, containLabel: true },
@@ -192,12 +197,6 @@ function CohortBenchmark({ benchmark }: { benchmark: Benchmark }) {
         label: { show: true, position: "right", color: "#344054", formatter: ({ value }: { value: number }) => percent.format(value) },
       }],
     });
-    const observer = new ResizeObserver(() => chart.resize());
-    observer.observe(target.current);
-    return () => {
-      observer.disconnect();
-      chart.dispose();
-    };
   }, [benchmark]);
 
   return (

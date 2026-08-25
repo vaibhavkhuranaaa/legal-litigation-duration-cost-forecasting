@@ -128,6 +128,9 @@ input, select { min-height: 36px; width: 100%; border: 1px solid #aeb7c2; border
 .trend-panel { min-height: 390px; }
 .ranking-panel { min-height: 390px; }
 .chart { width: 100%; }
+.chart[data-chart-status="loading"], .chart[data-chart-status="unavailable"] { display: grid; place-items: center; color: var(--muted); font-size: 11px; }
+.chart[data-chart-status="loading"]::before { content: "Loading chart"; }
+.chart[data-chart-status="unavailable"]::before { content: "Chart unavailable; the accessible summary remains available."; }
 .chart-wide { height: 314px; margin-top: 8px; }
 .chart-compact { height: 245px; margin-top: 14px; }
 .chart-benchmark { height: 205px; margin-top: 14px; }
