@@ -1,10 +1,10 @@
-# Federal Civil Litigation Operations and Duration Planner
+# Federal Civil Portfolio Intelligence
 
 [![Quality](https://github.com/vaibhavkhuranaaa/legal-litigation-duration-cost-forecasting/actions/workflows/quality.yml/badge.svg)](https://github.com/vaibhavkhuranaaa/legal-litigation-duration-cost-forecasting/actions/workflows/quality.yml)
 
-[Open the full-population public explorer](https://vaibhavkhuranaaa.github.io/legal-litigation-duration-cost-forecasting/). It runs entirely in the browser from a thresholded analytical cube built from all 5,008,334 governed records; no case-level data or duration model is shipped.
+[Open the full-population analytics dashboard](https://vaibhavkhuranaaa.github.io/legal-litigation-duration-cost-forecasting/). It runs entirely in the browser from a thresholded analytical cube built from all 5,008,334 governed records; no case-level data or duration model is shipped.
 
-Ready local product for nationwide federal civil operations analytics and synthetic planning. It
+Ready portfolio product for nationwide federal civil operations analytics and synthetic planning. It
 includes verified acquisition, a replayable raw platform, a tested dbt warehouse, governed marts,
 typed FastAPI contracts, an accessible React interface, and an offline full-population container.
 Raw data and warehouses remain private. Duration forecasts are disabled because model gates failed.
@@ -15,7 +15,7 @@ The product supports three decisions:
 
 - Legal-operations leaders review federal civil portfolio duration, pending inventory, coverage, and calibration.
 - Analysts filter the complete governed population across 94 districts, 14 nature families, 17 filing years, and four pending-age bands; cells below 200 records are withheld.
-- Matter planners compare observed historical cohorts, receive explicit forecast refusals, and explore clearly synthetic resource and budget scenarios.
+- Operations teams compare workload concentration, backlog aging, observed cohorts, evidence coverage, and clearly synthetic resource and budget scenarios within one governed analytical scope.
 
 Outputs use public court metadata, preserve open cases through right censoring, show provenance, and refuse unsupported forecasts. Product is not legal advice. Historical benchmarks are not predictions. Synthetic budget scenarios are not observed billing or real cost forecasts.
 
@@ -50,7 +50,7 @@ Source reconciliation verified 100 percent reviewed precision across 800 blinded
 - No FJC and RECAP match is assumed.
 - No judge, party, attorney, document-text, legal-outcome, or legal-advice feature is included.
 - Existing GCP resources and local Terraform state require reconciliation before any future cloud action.
-- The current release is local and offline; hosted production scaling is outside its verified scope.
+- The release supports a static public dashboard and an offline container; a live production data service and autoscaling are outside its verified scope.
 
 ## Scaling
 
@@ -85,6 +85,6 @@ M7 evaluates Kaplan-Meier and XGBoost AFT on 329,617 later-filed held-out cases.
 M8 through M14 complete that release: milestone events fail closed when required entry data is
 absent; scenarios are explicitly synthetic; the API exposes ten versioned contracts; the
 responsive interface passed zero-violation accessibility checks; reliability and security controls
-are tested; the aggregate demo runs as an unprivileged, network-independent container; and the
+are tested; the analytics application runs as an unprivileged, network-independent container; and the
 integrated release gate passes. See [offline demo](docs/demo.md), [model card](docs/model-card.md),
 [data quality](docs/data-quality.md), and [security review](docs/security-review.md).

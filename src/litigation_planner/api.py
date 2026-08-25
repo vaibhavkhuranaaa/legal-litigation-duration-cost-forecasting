@@ -235,7 +235,7 @@ class ProvenanceResponse(BaseModel):
 
 
 app = FastAPI(
-    title="Federal Civil Litigation Operations Planner",
+    title="Federal Civil Portfolio Intelligence API",
     version="1.1.0",
 )
 app.add_middleware(AdmissionControlMiddleware)

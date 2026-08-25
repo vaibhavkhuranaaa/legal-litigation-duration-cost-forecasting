@@ -28,11 +28,26 @@ flowchart LR
   D --> X["XGBoost AFT challenger"]
   K --> P["Champion policy and abstention"]
   X --> P
-  P --> S["Seeded deidentified SQLite"]
+  P -- "all gates pass only" --> G["Promoted scoring artifact"]
+  P -- "current failed state" --> F["Typed forecast refusal"]
+  T --> S["Seeded deidentified SQLite"]
+  T --> E["Deterministic aggregate cube"]
   S --> API["FastAPI"]
-  API --> UI["React operations and planner workspaces"]
+  G --> API
+  F --> API
+  E --> API
+  E --> UI["React portfolio intelligence dashboard"]
+  API --> UI
   Y["Synthetic scenario assumptions"] --> API
 ```
+
+## Analytics interface architecture
+
+The interface uses one global portfolio scope instead of independent report filters. District, case-family, filing-period, and procedural-cohort state are reflected in the URL and drive every supported dashboard panel. Pure TypeScript selectors derive the selected portfolio slice, annual filing series, pending-age series, district ranking, case-family ranking, and latest complete-year change from the versioned cube. The same selected evidence is included in the exported JSON view.
+
+`App.tsx` owns API loading, URL state, export, workspace navigation, and scenario requests. `AnalyticsDashboard.tsx` owns analytical composition and chart rendering. `population.ts` contains deterministic selection and ranking logic without browser or presentation dependencies. The FastAPI service remains the typed runtime boundary, while the static Pages build loads the identical cube directly. Neither path can access private data.
+
+The synthetic scenario engine is a connected secondary workspace rather than the product's primary claim. It accepts bounded user assumptions and returns deterministic sensitivity cases. It does not consume the selected portfolio as an implied forecast, observed cost, or recommended staffing plan.
 
 ## Data boundary
 
@@ -48,7 +63,7 @@ M7 evaluates Kaplan-Meier and XGBoost AFT locally against the private comparable
 
 ## Delivery boundary
 
-Local checks and source-controlled contracts are authorized. Private generated dbt documentation and the local warehouse remain outside Git. Existing cloud state is not assumed accurate. Any reconciliation is read-only and separately documented. Provisioning, deployment, spend, public exposure, push, publication, and portfolio work require owner approval.
+Local checks and source-controlled contracts are authorized. Private generated dbt documentation and the local warehouse remain outside Git. Existing cloud state is not assumed accurate. Any reconciliation is read-only and separately documented. New cloud provisioning, spend, deployment targets, and repository write actions require explicit owner approval; the current static dashboard and tagged release were published through those gates.
 
 ## Failure policy
 

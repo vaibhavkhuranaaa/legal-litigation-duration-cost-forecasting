@@ -1,5 +1,5 @@
 {
-  "name": "federal-civil-litigation-planner-web",
+  "name": "federal-civil-portfolio-intelligence-web",
   "private": true,
   "version": "1.1.0",
   "type": "module",
@@ -13,6 +13,7 @@
     "typecheck": "tsc -b"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-sans": "5.3.0",
     "echarts": "^6.0.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
