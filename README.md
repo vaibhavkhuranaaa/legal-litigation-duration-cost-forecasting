@@ -4,6 +4,19 @@
 
 [Open the full-population analytics dashboard](https://vaibhavkhuranaaa.github.io/legal-litigation-duration-cost-forecasting/). It runs entirely in the browser from a thresholded analytical cube built from all 5,008,334 governed records; no case-level data or duration model is shipped.
 
+## Next release plan
+
+The next release will extend this aggregate fast path with an identifier-minimized analytical mart
+containing the complete 5,008,334-record snapshot, queried in the browser through DuckDB-WASM and
+presented as an eight-page, Power BI-style report workspace. The mart will preserve collision records
+and expose only approved analytical fields. Docket identifiers, names, text, private review evidence,
+and model artifacts remain excluded.
+
+This capability is planned, not live. The milestone sequence, publication contract, architecture,
+performance targets, cost boundary, and exact first implementation slice are in the
+[row-level analytics release plan](docs/row-level-analytics-plan.md). Generated data will remain out
+of tracked Git and cannot be published until the new release gates pass.
+
 Ready portfolio product for nationwide federal civil operations analytics and synthetic planning. It
 includes verified acquisition, a replayable raw platform, a tested dbt warehouse, governed marts,
 typed FastAPI contracts, an accessible React interface, and an offline full-population container.
@@ -56,7 +69,9 @@ Source reconciliation verified 100 percent reviewed precision across 800 blinded
 
 The seeded demo runs offline from a deidentified SQLite extract and a 1.8 MB aggregate cube derived
 from the complete governed population, without BigQuery credentials or live warehouse queries.
-Scaled design remains unapproved and outside this release.
+The planned static-lakehouse extension retains the aggregate cube for initial rendering and adds
+partitioned Parquet only after browser and hosting benchmarks pass. It remains outside the current
+release until M22.
 
 ## Current checks
 

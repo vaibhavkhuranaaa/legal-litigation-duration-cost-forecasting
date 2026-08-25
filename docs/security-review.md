@@ -1,5 +1,10 @@
 # Release security review
 
+This review covers the current aggregate v1.1 release only. It does not authorize the planned
+row-level serving mart. M21 requires a new review of the M15 field contract, linkability decisions,
+opaque-key generation, manifest and partition allowlisting, remote range behavior, worker isolation,
+query and memory bounds, caching, export, dependency posture, and rollback before M22 can publish.
+
 The release boundary was reviewed across API admission, archive ingestion, source provenance,
 human-review promotion, spreadsheet export, public artifacts, browser rendering, secrets, runtime
 dependencies, and container contents. Validated issues were remediated with bounded requests and

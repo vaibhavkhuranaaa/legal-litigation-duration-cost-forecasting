@@ -1,5 +1,8 @@
 # Deliver a full-population portfolio intelligence dashboard
 
+Status: implemented for v1.1. Decision 0024 supersedes only the future aggregate-only limitation by
+planning governed statistical-record drill-through. The current dashboard remains aggregate-only.
+
 ## Decision
 
 Replace the split portfolio and matter-planner interface with one enterprise analytics workspace and a connected secondary scenario lab.

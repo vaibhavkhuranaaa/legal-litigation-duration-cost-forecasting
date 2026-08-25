@@ -12,7 +12,11 @@ Include the affected path or component, expected impact, reproduction conditions
 
 ## Security boundaries
 
-- No source dataset, warehouse, credential, model artifact, or case-level demonstration row belongs in this repository or release image.
+- No source dataset, warehouse, credential, model artifact, or generated row-level data asset belongs
+  in tracked Git or the default aggregate release image.
+- A future release may distribute only the M15-approved identifier-minimized statistical-record mart
+  through a generated deployment artifact or explicit data pack after M21 security review and M22
+  release approval.
 - The public API enforces bounded request bodies, validation, security headers, and process-local rate limiting.
-- The shipped demonstration is aggregate-only and can run without network access.
+- The current shipped demonstration is aggregate-only and can run without network access.
 - The product is not legal advice and does not release a duration forecast unless every declared gate passes.

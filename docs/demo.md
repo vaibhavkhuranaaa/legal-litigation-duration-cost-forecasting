@@ -14,3 +14,14 @@ The demonstration is an operations aid, not legal advice. Historical aggregates 
 and staffing/budget outputs are deterministic synthetic sensitivities based only on user inputs.
 
 The [public portfolio intelligence dashboard](https://vaibhavkhuranaaa.github.io/legal-litigation-duration-cost-forecasting/) uses the same approved cube and deterministic scenario equations. It contains no API credential, case-level row, model artifact, or live data connection.
+
+## Planned row-level distribution
+
+The next public mode keeps the aggregate cube for initial rendering and rollback, then queries an
+immutable, identifier-minimized Parquet data pack through DuckDB-WASM. The data pack is generated for
+the Pages deployment artifact or another M17-approved static origin and remains outside tracked Git.
+Application, manifest, semantic registry, and partitions share compatible version identifiers.
+
+The offline container remains aggregate-only unless a separately downloaded, compatible data pack is
+mounted by the user. A missing, incompatible, or unavailable data pack falls back to aggregate views
+with a clear explanation. It never causes the container to reach the private warehouse.

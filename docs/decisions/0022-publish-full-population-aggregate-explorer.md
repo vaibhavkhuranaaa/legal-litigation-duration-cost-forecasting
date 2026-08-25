@@ -1,5 +1,8 @@
 # Decision 0022: Publish a full-population aggregate explorer
 
+Status: implemented for v1.1. Decision 0024 plans an additional governed row-level serving mart but
+does not change this release's aggregate publication record.
+
 Date: 2026-08-25
 
 ## Decision

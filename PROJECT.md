@@ -1,4 +1,4 @@
-# Federal Civil Litigation Operations and Duration Planner
+# Federal Civil Portfolio Intelligence
 
 ## Product contract
 
@@ -9,8 +9,11 @@
 - Enrichment: CourtListener RECAP only after reviewed match and event-quality gates pass.
 - Validation: U.S. Courts and AO aggregate tables.
 - Model: Kaplan-Meier and XGBoost AFT remain failed evaluation evidence; duration forecast endpoints refuse.
-- Product: FastAPI backend and React TypeScript frontend.
-- Demo: seeded deidentified SQLite, no warehouse credentials or live BigQuery queries.
+- Current product: static aggregate dashboard plus a FastAPI and React TypeScript offline release.
+- Next release: identifier-minimized Parquet serving mart, semantic metric registry, DuckDB-WASM
+  query worker, synchronized report workspace, and bounded record explorer.
+- Distribution: GitHub Pages and an aggregate offline container, with no warehouse credentials or
+  live BigQuery queries.
 
 ## Boundaries
 
@@ -18,4 +21,4 @@ This product is planning analytics, not legal advice. It does not predict case o
 
 ## Release policy
 
-Failed model gates disable duration forecasts. Operations analytics and synthetic scenarios may ship with typed refusals, provenance, limitations, and no readiness claim for prediction. No deployment or public availability claim ships without verified evidence.
+Failed model gates disable duration forecasts. Operations analytics and synthetic scenarios may ship with typed refusals, provenance, limitations, and no readiness claim for prediction. The current aggregate release is public. The planned row-level release remains unshipped until M15 through M22 pass and release approval is recorded.

@@ -16,3 +16,19 @@ AO national filing, termination, and pending comparisons pass the predeclared 0.
 Southern District of Texas termination diagnostic remains outside the district threshold. Historical
 duration summaries exclude censored cases and are descriptive only. The shipped SQLite seed has
 only aggregate rows and contains no matter identifiers.
+
+## Planned publication checks
+
+The current evidence above covers the aggregate release. M16 through M22 must separately verify the
+row-level serving mart before publication:
+
+- exact reconciliation to 5,008,334 statistical records for the declared snapshot;
+- zero prohibited fields and zero direct or natural identifiers;
+- unique, non-reversible release record keys under the frozen M15 policy;
+- all 362,615 collision records retained and labeled;
+- exact reconciliation to every shared aggregate measure and supported grouping;
+- complete partition manifest, compatible schema, declared null policy, and deterministic replay;
+- exact pending, censoring, mapping, and source-record-count semantics; and
+- export and full-download metadata that identify the same immutable dataset version.
+
+No result is claimed for these checks until the corresponding milestone evidence is recorded.

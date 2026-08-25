@@ -2,7 +2,7 @@
 
 ## Release status
 
-No duration model is deployed or packaged. Kaplan–Meier and XGBoost AFT were required candidates;
+No duration model is deployed or packaged. Kaplan-Meier and XGBoost AFT were required candidates;
 neither passed the unchanged calibration, supported-slice, and coverage gates. Protocol versions 1,
 2, and 3 are retained as negative evidence. The version-3 final holdout remains sealed.
 

@@ -21,3 +21,22 @@ The scenario lab remains a connected secondary workspace. Its low, base, and hig
 - Keyboard focus, labels, landmarks, reduced-motion handling, and responsive layouts are part of the release contract.
 
 The product is an analytics and sensitivity instrument, not legal advice.
+
+## Planned report workspace
+
+M19 expands the current condensed dashboard without copying another product's visual trade dress.
+The established governed cockpit design remains, with eight report destinations: Executive Overview,
+Filing Trends, Pending Inventory and Aging, Case Mix, District Comparison, Record Explorer, Data
+Quality and Coverage, and Scenario Lab and Methods.
+
+District, circuit, filing period, termination period, pending status, nature family, jurisdiction,
+origin, and procedural cohort become synchronized slicers. Active-filter chips, selected chart marks,
+breadcrumbs, and shareable URL parameters display one report context. Chart selection cross-filters
+compatible visuals. Drill-through carries the full context to a detail page and provides an explicit
+return path.
+
+The Record Explorer uses table virtualization, a deterministic sort, projected columns, pinning,
+resizing, a column picker, bounded Arrow result pages, and a record-detail drawer. It reports both the
+matching population and returned row count. CSV exports are bounded and formula-safe; larger filtered
+results use Parquet. Loading progress, cancellation, memory refusal, unavailable partitions, query
+errors, empty results, and aggregate fallback each have explicit recovery states.
