@@ -19,7 +19,6 @@
   --amber: #b8741a;
   --amber-soft: #fff3dc;
   --red: #b54740;
-  --red-soft: #fbeae8;
   --focus: #2e90fa;
 }
 
@@ -55,11 +54,9 @@ input, select { caret-color: var(--teal); }
 .side-navigation nav button:hover { color: #ffffff; background: #111f33; }
 .side-navigation nav button.active { color: #ffffff; background: var(--nav-raised); box-shadow: inset 2px 0 0 var(--teal); }
 .side-navigation nav button.active small { color: #a9c5c7; }
-.side-status { margin-top: auto; display: grid; gap: 9px; padding: 18px 20px; border-top: 1px solid #26374f; }
-.side-status span { display: flex; align-items: center; gap: 8px; color: #c5d0da; font-size: 11px; }
-.side-status small { margin-top: 6px; color: #7f8fa2; font-size: 10px; font-variant-numeric: tabular-nums; }
-.status-dot { width: 7px; height: 7px; border-radius: 50%; background: #3bb6a9; }
-.status-dot.unavailable { background: #e09c47; }
+.side-status { margin-top: auto; display: grid; gap: 4px; padding: 18px 20px; border-top: 1px solid #26374f; }
+.side-status span { color: #c5d0da; font-size: 11px; font-weight: 650; }
+.side-status small { color: #7f8fa2; font-size: 10px; font-variant-numeric: tabular-nums; }
 
 .product-workspace { min-width: 0; display: flex; flex-direction: column; }
 .workspace-bar { position: sticky; z-index: 20; top: 0; min-height: 58px; display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 10px 24px; border-bottom: 1px solid var(--line); background: rgba(255, 255, 255, .97); }
@@ -128,9 +125,9 @@ input, select { min-height: 36px; width: 100%; border: 1px solid #aeb7c2; border
 .trend-panel { min-height: 390px; }
 .ranking-panel { min-height: 390px; }
 .chart { width: 100%; }
-.chart[data-chart-status="loading"], .chart[data-chart-status="unavailable"] { display: grid; place-items: center; color: var(--muted); font-size: 11px; }
+.chart[data-chart-status="loading"], .chart[data-chart-status="error"] { display: grid; place-items: center; color: var(--muted); font-size: 11px; }
 .chart[data-chart-status="loading"]::before { content: "Loading chart"; }
-.chart[data-chart-status="unavailable"]::before { content: "Chart unavailable; the accessible summary remains available."; }
+.chart[data-chart-status="error"]::before { content: "Chart could not load; the accessible summary remains in the page."; }
 .chart-wide { height: 314px; margin-top: 8px; }
 .chart-compact { height: 245px; margin-top: 14px; }
 .chart-benchmark { height: 205px; margin-top: 14px; }
@@ -152,19 +149,6 @@ tbody th { color: #26364b; font-weight: 650; }
 .cohort-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px solid var(--soft-line); color: var(--muted); font-size: 9px; }
 .inline-empty { margin: 30px 0; color: var(--muted); font-size: 12px; }
 
-.evidence-section { margin-top: 28px; border: 1px solid var(--line); background: var(--surface); }
-.evidence-heading { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px; border-bottom: 1px solid var(--line); }
-.evidence-heading h2 { margin: 0; font-size: 17px; }
-.evidence-heading p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
-.evidence-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
-.evidence-grid article { min-height: 180px; padding: 17px; border-right: 1px solid var(--line); }
-.evidence-grid article:last-child { border-right: 0; }
-.status-label { display: inline-flex; padding: 4px 7px; border-radius: 999px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .045em; }
-.status-label.ready { color: #0c5e61; background: var(--teal-soft); }
-.status-label.unavailable { color: #8c3b36; background: var(--red-soft); }
-.evidence-grid h3 { margin: 15px 0 8px; font-size: 13px; }
-.evidence-grid strong { display: block; color: #26364b; font-size: 14px; font-variant-numeric: tabular-nums; }
-.evidence-grid p { margin: 12px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
 .methodology { margin-top: 16px; border: 1px solid var(--line); background: var(--surface); }
 .methodology summary { min-height: 54px; display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 14px 18px; cursor: pointer; font-size: 12px; font-weight: 750; }
 .methodology summary small { color: var(--muted); font-weight: 500; }
@@ -199,7 +183,6 @@ tbody th { color: #26364b; font-weight: 650; }
 .scenario-summary strong { font-size: 14px; }
 .inline-error { color: var(--red); font-size: 11px; font-weight: 700; }
 
-.product-footer { display: flex; justify-content: space-between; gap: 20px; margin-top: auto; padding: 16px 24px; border-top: 1px solid var(--line); color: var(--muted); background: #ffffff; font-size: 9px; }
 .loading-state, .fatal-state { max-width: 760px; margin: 12vh auto; padding: 32px; }
 .fatal-state > span { color: var(--red); font-size: 11px; font-weight: 800; text-transform: uppercase; }
 .fatal-state h1 { margin: 12px 0; }
@@ -219,9 +202,6 @@ tbody th { color: #26364b; font-weight: 650; }
   .query-actions { justify-self: end; }
   .analytics-grid { grid-template-columns: 1fr; }
   .analysis-panel { min-height: auto; }
-  .evidence-grid { grid-template-columns: repeat(2, 1fr); }
-  .evidence-grid article:nth-child(2) { border-right: 0; }
-  .evidence-grid article:nth-child(n + 3) { border-top: 1px solid var(--line); }
   .scenario-layout { grid-template-columns: 1fr; }
   .scenario-inputs { border-right: 0; border-bottom: 1px solid var(--line); }
 }
@@ -266,11 +246,6 @@ tbody th { color: #26364b; font-weight: 650; }
   .panel-heading > span { text-align: left; }
   .ranking-heading { align-items: start; }
   .segmented-control { width: max-content; }
-  .evidence-heading { display: grid; }
-  .evidence-grid { grid-template-columns: 1fr; }
-  .evidence-grid article { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
-  .evidence-grid article:last-child { border-bottom: 0; }
-  .evidence-grid article:nth-child(n + 3) { border-top: 0; }
   .methodology summary { align-items: start; }
   .methodology-grid { grid-template-columns: 1fr; }
   .methodology-grid > div { border-right: 0; border-bottom: 1px solid var(--line); }
@@ -278,5 +253,4 @@ tbody th { color: #26364b; font-weight: 650; }
   .scenario-summary { grid-template-columns: 1fr; }
   .scenario-summary div { border-right: 0; border-bottom: 1px solid var(--line); }
   .scenario-summary div:last-child { border-bottom: 0; }
-  .product-footer { flex-direction: column; padding: 14px; }
 }

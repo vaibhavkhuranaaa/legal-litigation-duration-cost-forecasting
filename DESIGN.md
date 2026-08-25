@@ -16,8 +16,7 @@ colors:
   operational-teal-soft: "#e5f3f2"
   caution-amber: "#b8741a"
   caution-amber-soft: "#fff3dc"
-  unavailable-red: "#b54740"
-  unavailable-red-soft: "#fbeae8"
+  error-red: "#b54740"
   focus-blue: "#2e90fa"
 typography:
   display:
@@ -88,18 +87,6 @@ components:
     typography: "{typography.body}"
     rounded: "{rounded.control}"
     padding: "11px 12px"
-  status-available:
-    backgroundColor: "{colors.operational-teal-soft}"
-    textColor: "{colors.operational-teal-dark}"
-    typography: "{typography.label}"
-    rounded: "{rounded.status}"
-    padding: "4px 7px"
-  status-unavailable:
-    backgroundColor: "{colors.unavailable-red-soft}"
-    textColor: "{colors.unavailable-red}"
-    typography: "{typography.label}"
-    rounded: "{rounded.status}"
-    padding: "4px 7px"
   analysis-panel:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
@@ -115,13 +102,13 @@ components:
 
 The interface is a dense, calm operational workspace for users who need an executive read and immediate analytical depth. A navy shell establishes institutional authority, white analytical surfaces keep evidence legible, and compact controls preserve room for high-density tables and charts. The system feels precise, sober, and continuously auditable.
 
-Hierarchy comes from placement, tonal contrast, rules, and typographic weight rather than decoration. Global scope remains visually attached to the evidence it controls. Status, support, method, source period, and limitations stay near the values they qualify. No visual treatment may make an unavailable capability look like a weakly supported estimate.
+Hierarchy comes from placement, tonal contrast, rules, and typographic weight rather than decoration. Global scope remains visually attached to the evidence it controls. Support, method, source period, and limitations stay near the values they qualify. Product boundaries remain in the collapsed Methods disclosure instead of competing with the analytical summary.
 
 **Key Characteristics:**
 
 - Dense governed analytics with a clear 30-second summary layer.
 - Persistent navy operational shell and white evidence surfaces.
-- Restrained teal for active and available states, amber for caution, and red for unavailable states.
+- Restrained teal for active states, amber for caution, and red only for blocking errors.
 - Compact squared controls, structured dividers, tabular numerals, and plain operational language.
 - One global scope that visibly binds metrics, charts, rankings, cohort context, and export.
 - Responsive disclosure through explicit More and Filters controls.
@@ -139,7 +126,7 @@ The palette is institutional and low-saturation. Navy and neutral surfaces carry
 ### Secondary
 
 - **Caution Amber:** Use for aging pressure, withheld intersections, and bounded caution. It never means failure.
-- **Unavailable Red:** Use only for typed unavailability, blocking errors, and failed capability states. It never decorates ordinary negative movement.
+- **Error Red:** Use only for blocking errors and failed requests. It never decorates ordinary negative movement.
 - **Focus Blue:** Reserve for visible keyboard focus so focus remains distinct from data state and selection.
 
 ### Neutral
@@ -153,9 +140,9 @@ The palette is institutional and low-saturation. Navy and neutral surfaces carry
 
 ### Named Rules
 
-**The Semantic Scarcity Rule.** Teal, amber, and red appear only when they communicate selection, availability, caution, or refusal. Neutral structure carries everything else.
+**The Semantic Scarcity Rule.** Teal, amber, and red appear only when they communicate selection, caution, or failure. Neutral structure carries everything else.
 
-**The Evidence Class Rule.** Observed evidence, synthetic scenarios, and unavailable capabilities must always carry explicit wording and distinct semantic treatment.
+**The Evidence Class Rule.** Observed evidence and synthetic scenarios always carry explicit wording and distinct semantic treatment.
 
 ## Typography
 
@@ -182,9 +169,9 @@ The palette is institutional and low-saturation. Navy and neutral surfaces carry
 
 The desktop application uses a fixed operational rail and a fluid analytical workspace. The rail is 232px wide at full desktop width and contracts to 190px below 1180px. The evidence workspace is centered with a maximum width of 1540px and uses a dense 18px to 24px panel rhythm. The sticky workspace bar is 58px high, and the global query bar remains directly below it so scope never detaches from results.
 
-The primary dashboard follows a deliberate sequence: title and snapshot, global scope, metric strip, scope interpretation, analytical grid, evidence status, and methodology. The analytical grid favors a wider trend column and a narrower comparison column. Panels join through shared 1px rules rather than isolated floating cards. Tables use 8px by 9px cells, right-align numerical columns, and preserve horizontal scrolling when width is constrained.
+The primary dashboard follows a deliberate sequence: title and snapshot, global scope, metric strip, scope interpretation, analytical grid, and methodology. The analytical grid favors a wider trend column and a narrower comparison column. Panels join through shared 1px rules rather than isolated floating cards. Tables use 8px by 9px cells, right-align numerical columns, and preserve horizontal scrolling when width is constrained.
 
-Below 1180px, the analytical grid becomes a single column, evidence cards become a two-column grid, and scenario inputs stack above outputs. At 760px and below, the side rail becomes a sticky top navigation; secondary destinations move into an explicit More disclosure. The global scope collapses behind an explicit Filters control. Metric strips become two columns, evidence and methodology become one column, and scenario summaries stack. Never hide scope or secondary destinations without a named disclosure control.
+Below 1180px, the analytical grid becomes a single column and scenario inputs stack above outputs. At 760px and below, the side rail becomes a sticky top navigation; secondary destinations move into an explicit More disclosure. The global scope collapses behind an explicit Filters control. Metric strips become two columns, methodology becomes one column, and scenario summaries stack. Never hide scope or secondary destinations without a named disclosure control.
 
 **The Bound Scope Rule.** Filters, scope interpretation, result panels, and export represent one shared analytical state. A scope change must visibly rebind the entire workspace.
 
@@ -229,7 +216,7 @@ The global scope bar is the visual contract between user intent and analytical o
 
 ### Fields
 
-Inputs and selects are 36px high with a 1px border, 4px radius, 7px by 9px internal padding, and 12px text. Fields on white surfaces use ink on white; fields in the global scope bar use light text on raised navy. Labels remain uppercase and compact. Error copy uses unavailable red and appears adjacent to the affected workflow.
+Inputs and selects are 36px high with a 1px border, 4px radius, 7px by 9px internal padding, and 12px text. Fields on white surfaces use ink on white; fields in the global scope bar use light text on raised navy. Labels remain uppercase and compact. Error copy uses error red and appears adjacent to the affected workflow.
 
 ### Segmented Controls
 
@@ -243,9 +230,9 @@ Metric strips are joined white cells with square corners and shared dividers. Ea
 
 Tables are compact, numerical, and horizontally scrollable. Headers use uppercase 9px labels on the cool canvas tone. Numbers align right; rank and identity columns align left. Interactive rank labels are visibly underlined, and selection uses the soft teal surface across the full row.
 
-### Status Labels and Bounded States
+### Bounded States
 
-Available and unavailable statuses use compact pill labels, but the surrounding card remains square. Withheld intersections use an amber bordered field with the publication threshold and a plain explanation. Loading uses neutral skeleton blocks; fatal errors lead with unavailable red, a factual title, a recovery explanation, and a retry action.
+Withheld intersections use an amber bordered field with the publication threshold and a plain explanation. Loading uses neutral skeleton blocks; fatal errors lead with error red, a factual title, a recovery explanation, and a retry action.
 
 ### Charts
 
@@ -264,7 +251,7 @@ Methods, provenance, support, and publication rules live in a native disclosure 
 - **Do** place source period, support, method, and limitation beside the value or view they qualify.
 - **Do** use tabular numerals, compact labels, explicit empty states, and text summaries for charts.
 - **Do** preserve keyboard focus, reduced motion, responsive More and Filters disclosures, and horizontal table access.
-- **Do** label synthetic scenarios, observed historical context, suppressed cells, and unavailable capabilities in words.
+- **Do** label synthetic scenarios, observed historical context, and suppressed cells in words.
 
 ### Don't:
 
@@ -272,5 +259,5 @@ Methods, provenance, support, and publication rules live in a native disclosure 
 - **Don't** turn evidence panels into floating rounded cards or add shadows to ordinary surfaces.
 - **Don't** introduce a marketing hero, oversized display type, decorative illustration, or courtroom imagery into the operational workspace.
 - **Don't** hide filters, methodology, provenance, or limitations to make the dashboard appear simpler.
-- **Don't** style an unavailable capability like a weak forecast, estimate, or pending result.
+- **Don't** imply a forecast, estimate, or pending result when the product provides historical aggregate evidence.
 - **Don't** mix synthetic planning amounts with observed metrics without a labeled visual boundary.

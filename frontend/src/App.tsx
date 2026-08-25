@@ -4,11 +4,9 @@ import { AnalyticsDashboard, type RankingMode } from "./AnalyticsDashboard";
 import {
   api,
   type Benchmark,
-  type Milestones,
   type PopulationExplorer,
   type Portfolio,
   type Provenance,
-  type Readiness,
   type Scenario,
 } from "./api";
 import {
@@ -26,7 +24,7 @@ const cohortOptions = [
 ];
 
 type Workspace = "dashboard" | "scenario";
-type NavigationSection = "overview" | "workload" | "aging" | "cohorts" | "quality" | "scenario" | "methods";
+type NavigationSection = "overview" | "workload" | "aging" | "cohorts" | "scenario" | "methods";
 
 const initialParameters = new URLSearchParams(window.location.search);
 const initialWorkspace: Workspace = ["planner", "scenario"].includes(initialParameters.get("view") ?? "") ? "scenario" : "dashboard";
@@ -71,11 +69,11 @@ function ScenarioWorkbench({ onBack }: { onBack: () => void }) {
     <div className="scenario-lab">
       <section className="scenario-heading">
         <div>
-          <button className="text-action" type="button" onClick={onBack}>Back to portfolio intelligence</button>
+          <button className="text-action" type="button" onClick={onBack}>Back to portfolio dashboard</button>
           <h1>Synthetic resource sensitivity</h1>
-          <p>Translate explicit workload, time, effort, and rate assumptions into low, base, and high staffing cases. No observed legal-cost data or duration prediction is used.</p>
+          <p>Compare low, base, and high staffing cases from explicit workload, effort, and rate assumptions.</p>
         </div>
-        <div className="scenario-boundary"><span>Evidence class</span><strong>Synthetic assumptions</strong><small>Decision aid, not a forecast</small></div>
+        <div className="scenario-boundary"><span>Calculation</span><strong>Synthetic assumptions</strong><small>Deterministic sensitivity</small></div>
       </section>
 
       <div className="scenario-layout">
@@ -119,7 +117,7 @@ function ScenarioWorkbench({ onBack }: { onBack: () => void }) {
               <div className="scenario-summary">
                 <div><span>Observed cost records</span><strong>0</strong></div>
                 <div><span>Scenario method</span><strong>Deterministic</strong></div>
-                <div><span>Forecast output</span><strong>None</strong></div>
+                <div><span>Data basis</span><strong>User assumptions</strong></div>
               </div>
               <p className="panel-footnote">{scenario.limitation}</p>
             </div>
@@ -132,11 +130,9 @@ function ScenarioWorkbench({ onBack }: { onBack: () => void }) {
 
 function App() {
   const [workspace, setWorkspace] = useState<Workspace>(initialWorkspace);
-  const [readiness, setReadiness] = useState<Readiness | null>(null);
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
   const [explorer, setExplorer] = useState<PopulationExplorer | null>(null);
   const [benchmark, setBenchmark] = useState<Benchmark | null>(null);
-  const [milestones, setMilestones] = useState<Milestones | null>(null);
   const [provenance, setProvenance] = useState<Provenance | null>(null);
   const [cohort, setCohort] = useState(initialCohort);
   const [populationFilters, setPopulationFilters] = useState<PopulationFilters>(initialPopulationFilters);
@@ -150,15 +146,13 @@ function App() {
     let active = true;
     setError("");
     Promise.all([
-      api.readiness(), api.portfolio(), api.explorer(), api.benchmark(cohort), api.milestones(), api.provenance(),
+      api.portfolio(), api.explorer(), api.benchmark(cohort), api.provenance(),
     ])
-      .then(([nextReadiness, nextPortfolio, nextExplorer, nextBenchmark, nextMilestones, nextProvenance]) => {
+      .then(([nextPortfolio, nextExplorer, nextBenchmark, nextProvenance]) => {
         if (!active) return;
-        setReadiness(nextReadiness);
         setPortfolio(nextPortfolio);
         setExplorer(nextExplorer);
         setBenchmark(nextBenchmark);
-        setMilestones(nextMilestones);
         setProvenance(nextProvenance);
       })
       .catch((reason: unknown) => {
@@ -203,7 +197,6 @@ function App() {
       filing_series: selectedFilings,
       pending_age_series: selectedPendingAge,
       benchmark,
-      milestones,
       provenance,
       publication_policy: explorer?.publication_policy,
     }, null, 2)], { type: "application/json" });
@@ -232,7 +225,7 @@ function App() {
     return <main className="fatal-state"><span>Connection error</span><h1>Portfolio evidence did not load</h1><p>{error}. Start the local API or refresh the static artifact, then retry.</p><button className="button-primary" type="button" onClick={() => setRequestKey((value) => value + 1)}>Retry data load</button></main>;
   }
 
-  if (!readiness || !portfolio || !explorer || !benchmark || !milestones || !provenance) {
+  if (!portfolio || !explorer || !benchmark || !provenance) {
     return <main className="loading-state" aria-busy="true"><span className="loading-line" /><span className="loading-line wide" /><span className="loading-block" /><p>Loading governed portfolio evidence</p></main>;
   }
 
@@ -247,27 +240,24 @@ function App() {
           <button type="button" className={activeSection === "cohorts" ? "active" : ""} aria-current={activeSection === "cohorts" ? "page" : undefined} onClick={() => openSection("cohorts")}><span>Cohorts</span><small>Observed outcomes</small></button>
           <button className="mobile-more-trigger" type="button" aria-expanded={mobileMoreOpen} aria-controls="secondary-navigation" onClick={() => setMobileMoreOpen((value) => !value)}><span>More</span><small>More views</small></button>
           <div className={`nav-more${mobileMoreOpen ? " open" : ""}`} id="secondary-navigation">
-            <button type="button" className={activeSection === "quality" ? "active" : ""} aria-current={activeSection === "quality" ? "page" : undefined} onClick={() => openSection("quality")}><span>Evidence</span><small>Coverage and limits</small></button>
             <button type="button" className={activeSection === "scenario" ? "active" : ""} aria-current={activeSection === "scenario" ? "page" : undefined} onClick={openScenario}><span>Scenario lab</span><small>Synthetic sensitivity</small></button>
             <button type="button" className={activeSection === "methods" ? "active" : ""} aria-current={activeSection === "methods" ? "page" : undefined} onClick={() => openSection("methods")}><span>Methods</span><small>Source and policy</small></button>
           </div>
         </nav>
-        <div className="side-status"><span><i className="status-dot" />Analytics ready</span><span><i className="status-dot unavailable" />Forecast unavailable</span><small>Snapshot {explorer.source_snapshot}</small></div>
+        <div className="side-status"><span>Full-population view</span><small>Snapshot {explorer.source_snapshot}</small></div>
       </aside>
 
       <main className="product-workspace">
         <header className="workspace-bar">
-          <div><strong>{workspace === "dashboard" ? "Portfolio overview" : "Scenario lab"}</strong><span>Full population / governed aggregates</span></div>
+          <div><strong>{workspace === "dashboard" ? "Condensed dashboard" : "Scenario lab"}</strong><span>5.0M records / governed aggregates</span></div>
           <div className="workspace-actions"><span className="release-state">Contract v{provenance.release_version}</span>{workspace === "dashboard" && <button className="button-secondary" type="button" onClick={exportView}>Export evidence</button>}</div>
         </header>
 
         {workspace === "dashboard" ? (
           <AnalyticsDashboard
-            readiness={readiness}
             portfolio={portfolio}
             explorer={explorer}
             benchmark={benchmark}
-            milestones={milestones}
             provenance={provenance}
             filters={populationFilters}
             cohort={cohort}
@@ -275,11 +265,8 @@ function App() {
             onFiltersChange={setPopulationFilters}
             onCohortChange={setCohort}
             onRankingModeChange={setRankingMode}
-            onOpenScenario={openScenario}
           />
         ) : <ScenarioWorkbench onBack={() => openSection("overview")} />}
-
-        <footer className="product-footer"><span>Observed public metadata and explicit capability boundaries</span><span>Not legal advice / no matter-level rows published</span></footer>
       </main>
     </div>
   );

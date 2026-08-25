@@ -3,11 +3,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import type {
   Benchmark,
-  Milestones,
   PopulationExplorer,
   Portfolio,
   Provenance,
-  Readiness,
 } from "./api";
 import {
   type PopulationFilters,
@@ -38,7 +36,7 @@ function mountChart(target: HTMLDivElement, option: EChartsCoreOption) {
       target.dataset.chartStatus = "ready";
     })
     .catch(() => {
-      if (!cancelled) target.dataset.chartStatus = "unavailable";
+      if (!cancelled) target.dataset.chartStatus = "error";
     });
   return () => {
     cancelled = true;
@@ -69,7 +67,7 @@ function FilingTrend({ explorer, filters }: { explorer: PopulationExplorer; filt
     return mountChart(target.current, {
       animationDuration: chartAnimationDuration(),
       animationEasing: "cubicOut",
-      grid: { left: 8, right: 18, top: 24, bottom: 8, containLabel: true },
+      grid: { left: 8, right: 18, top: 24, bottom: 8, outerBoundsMode: "same", outerBoundsContain: "axisLabel" },
       xAxis: {
         type: "category",
         boundaryGap: false,
@@ -120,7 +118,7 @@ function PendingAge({ explorer, filters }: { explorer: PopulationExplorer; filte
     return mountChart(target.current, {
       animationDuration: chartAnimationDuration(),
       animationEasing: "cubicOut",
-      grid: { left: 6, right: 28, top: 10, bottom: 6, containLabel: true },
+      grid: { left: 6, right: 28, top: 10, bottom: 6, outerBoundsMode: "same", outerBoundsContain: "axisLabel" },
       xAxis: {
         type: "value",
         axisLabel: { color: "#667085", formatter: (value: number) => compactNumber.format(value), fontSize: 11 },
@@ -172,7 +170,7 @@ function CohortBenchmark({ benchmark }: { benchmark: Benchmark }) {
     return mountChart(target.current, {
       animationDuration: chartAnimationDuration(),
       animationEasing: "cubicOut",
-      grid: { left: 4, right: 40, top: 8, bottom: 4, containLabel: true },
+      grid: { left: 4, right: 40, top: 8, bottom: 4, outerBoundsMode: "same", outerBoundsContain: "axisLabel" },
       xAxis: {
         type: "value",
         min: 0,
@@ -212,11 +210,9 @@ function CohortBenchmark({ benchmark }: { benchmark: Benchmark }) {
 export type RankingMode = "district" | "nature";
 
 type AnalyticsDashboardProps = {
-  readiness: Readiness;
   portfolio: Portfolio;
   explorer: PopulationExplorer;
   benchmark: Benchmark;
-  milestones: Milestones;
   provenance: Provenance;
   filters: PopulationFilters;
   cohort: string;
@@ -224,15 +220,12 @@ type AnalyticsDashboardProps = {
   onFiltersChange: (filters: PopulationFilters) => void;
   onCohortChange: (cohort: string) => void;
   onRankingModeChange: (mode: RankingMode) => void;
-  onOpenScenario: () => void;
 };
 
 export function AnalyticsDashboard({
-  readiness,
   portfolio,
   explorer,
   benchmark,
-  milestones,
   provenance,
   filters,
   cohort,
@@ -240,7 +233,6 @@ export function AnalyticsDashboard({
   onFiltersChange,
   onCohortChange,
   onRankingModeChange,
-  onOpenScenario,
 }: AnalyticsDashboardProps) {
   const [scopeExpanded, setScopeExpanded] = useState(false);
   const slice = useMemo(() => selectPortfolioSlice(explorer, filters), [explorer, filters]);
@@ -277,8 +269,8 @@ export function AnalyticsDashboard({
     <div className="dashboard" id="overview">
       <section className="dashboard-heading" aria-labelledby="dashboard-title">
         <div>
-          <h1 id="dashboard-title">Federal civil portfolio intelligence</h1>
-          <p>Observed workload, inventory pressure, cohort behavior, and evidence coverage across the complete governed population.</p>
+          <h1 id="dashboard-title">Condensed portfolio dashboard</h1>
+          <p>Workload, inventory pressure, cohort behavior, and coverage across {integer.format(explorer.population.statistical_records)} governed records.</p>
         </div>
         <div className="snapshot-block">
           <span>Data snapshot</span>
@@ -339,7 +331,7 @@ export function AnalyticsDashboard({
             <article><span>Statistical records</span><strong>{integer.format(slice.total_records)}</strong><small>{percent.format(slice.total_records / portfolio.statistical_records)} of nationwide records</small></article>
             <article><span>Pending inventory</span><strong>{integer.format(slice.pending_records)}</strong><small>{percent.format(slice.pending_share)} of selected records</small></article>
             <article><span>Matched evidence coverage</span><strong>{percent.format(slice.match_coverage)}</strong><small>{integer.format(slice.matched_records)} reviewed matches / all selected records</small></article>
-            <article><span>Latest complete filing year</span><strong>{filingChange ? signedPercent.format(filingChange.change) : "Not available"}</strong><small>{filingChange ? `${filingChange.currentYear} compared with ${filingChange.previousYear}` : "Two supported years required"}</small></article>
+            <article><span>Latest complete filing year</span><strong>{filingChange ? signedPercent.format(filingChange.change) : "Insufficient history"}</strong><small>{filingChange ? `${filingChange.currentYear} compared with ${filingChange.previousYear}` : "Two supported years required"}</small></article>
           </section>
 
           <section className="scope-brief" aria-label="Scope interpretation">
@@ -405,45 +397,12 @@ export function AnalyticsDashboard({
         </>
       )}
 
-      <section className="evidence-section" id="quality" aria-labelledby="quality-title">
-        <div className="evidence-heading">
-          <div><h2 id="quality-title">Evidence and capability status</h2><p>The interface distinguishes what the data supports from what remains unavailable.</p></div>
-          <button className="button-secondary" type="button" onClick={onOpenScenario}>Open scenario lab</button>
-        </div>
-        <div className="evidence-grid">
-          <article>
-            <span className="status-label ready">Available</span>
-            <h3>Observed portfolio analytics</h3>
-            <strong>{integer.format(explorer.population.statistical_records)} records</strong>
-            <p>Exact national and marginal totals with thresholded district-by-family intersections.</p>
-          </article>
-          <article>
-            <span className="status-label ready">Available</span>
-            <h3>Synthetic resource sensitivity</h3>
-            <strong>{readiness.scenario_engine}</strong>
-            <p>User assumptions produce deterministic low, base, and high staffing and budget cases.</p>
-          </article>
-          <article>
-            <span className="status-label unavailable">Unavailable</span>
-            <h3>Duration prediction</h3>
-            <strong>Failed, not promoted</strong>
-            <p>{readiness.reason}</p>
-          </article>
-          <article>
-            <span className="status-label unavailable">Unavailable</span>
-            <h3>Docket-event enrichment</h3>
-            <strong>{percent.format(milestones.match_coverage)} match coverage</strong>
-            <p>Missing {milestones.missing_event_fields.join(" and ")}. No event is inferred.</p>
-          </article>
-        </div>
-      </section>
-
       <details className="methodology" id="methods">
-        <summary><span>Methods, provenance, and publication contract</span><small>Release contract v{provenance.release_version}</small></summary>
+        <summary><span>Methods and data provenance</span><small>Contract v{provenance.release_version}</small></summary>
         <div className="methodology-grid">
           <div><h3>Publication boundary</h3><p>{explorer.publication_policy.limitation}</p><dl><div><dt>Minimum support</dt><dd>{integer.format(explorer.publication_policy.minimum_support)}</dd></div><div><dt>Matter-level rows</dt><dd>{explorer.publication_policy.matter_level_rows}</dd></div><div><dt>Full population used</dt><dd>Yes</dd></div></dl></div>
           <div><h3>Source lineage</h3><dl><div><dt>FJC snapshot</dt><dd>{provenance.fjc_snapshot}</dd></div><div><dt>RECAP snapshot</dt><dd>{provenance.recap_snapshot}</dd></div><div><dt>Development outcomes</dt><dd>{provenance.development_outcomes_end}</dd></div></dl></div>
-          <div><h3>Interpretation limits</h3><p>{portfolio.interpretation}</p><dl><div><dt>Legal advice</dt><dd>No</dd></div><div><dt>Observed cost forecast</dt><dd>No</dd></div><div><dt>Model status</dt><dd>Failed, not promoted</dd></div></dl></div>
+          <div><h3>Interpretation</h3><p>Historical aggregates describe observed portfolio behavior. Scenario outputs use explicit user assumptions.</p><dl><div><dt>Scope</dt><dd>Aggregate only</dd></div><div><dt>Matter-level rows</dt><dd>0</dd></div><div><dt>Legal advice</dt><dd>No</dd></div></dl></div>
         </div>
       </details>
     </div>
