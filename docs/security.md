@@ -18,3 +18,9 @@ It has no warehouse or cloud credentials and requires no live BigQuery connectio
 Residual limits: the API is intended for a single local process. A multi-replica or internet
 deployment requires authenticated access, a shared edge rate limit, TLS termination, centralized
 logs, signed review approvals, and a fresh deployment-specific threat assessment.
+
+The offline dbt environment currently inherits four `sqlparse` advisories. dbt-core 1.11.11 still
+requires `sqlparse <0.6`, so no compatible patched release exists. The accepted exception is bounded:
+`sqlparse` is excluded from the production requirements and container, processes only
+repository-controlled SQL during local/CI analytics builds, and is re-audited when dbt changes its
+constraint. Untrusted SQL must never enter that toolchain.

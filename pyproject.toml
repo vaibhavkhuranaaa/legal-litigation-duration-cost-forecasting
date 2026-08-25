@@ -21,7 +21,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.4,<9", "ruff>=0.12,<1"]
+dev = ["pytest>=9.0.3,<10", "ruff>=0.12,<1"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/litigation_planner"]
