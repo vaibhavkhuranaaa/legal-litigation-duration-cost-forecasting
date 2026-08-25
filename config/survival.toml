@@ -1,0 +1,46 @@
+version = 2
+source_relation = "analytics.mart_comparable_cases"
+snapshot_cutoff = "2026-03-31"
+train_start = "2010-01-01"
+train_end = "2022-03-31"
+validation_start = "2022-04-01"
+validation_end = "2023-03-31"
+test_start = "2023-04-01"
+test_end = "2024-03-31"
+baseline_lookback_start = "2019-04-01"
+minimum_training_cases = 500
+minimum_slice_cases = 200
+horizons_days = [365, 730]
+brier_grid_days = [30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 365, 395, 425, 455, 485, 515, 545, 575, 605, 635, 665, 695, 730]
+bootstrap_replicates = 400
+random_seed = 20260813
+
+[gates]
+calibration_error = 0.05
+slice_calibration_error = 0.10
+estimate_coverage = 0.80
+challenger_ibs_improvement = 0.05
+challenger_bootstrap_lower = 0.0
+
+[policy]
+policy_id = "individual-intake-duration-v2"
+expected_digest = "ea1e79ea0c277a6acd9b94a12bdda83840c0607a807b4f75a6eb8876b1906bc5"
+
+[policy.capability]
+capability_id = "individual_duration_forecast"
+unit_of_analysis = "individual intake matter"
+target = "FJC statistical termination probability"
+population = "collision-free federal civil cases with supported nature codes"
+horizons_days = [365, 730]
+
+[challenger]
+distribution = "normal"
+aft_loss_distribution_scale = 1.0
+max_depth = 6
+learning_rate = 0.05
+max_rounds = 500
+early_stopping_rounds = 30
+min_child_weight = 50
+subsample = 0.8
+colsample_bytree = 0.9
+nthread = 4

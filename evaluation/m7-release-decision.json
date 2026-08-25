@@ -1,0 +1,33 @@
+{
+  "capabilities": {
+    "descriptive_analytics": {"reason_codes": [], "status": "ready"},
+    "individual_duration_forecast": {
+      "reason_codes": [
+        "baseline.calibration_730d.failed",
+        "baseline.supported_slice_calibration.failed",
+        "challenger.calibration_730d.failed",
+        "challenger.supported_slice_calibration.failed",
+        "policy.baseline_required"
+      ],
+      "status": "blocked"
+    }
+  },
+  "checks": [
+    {"comparator": "less_than_or_equal", "estimator": "baseline", "gate_id": "calibration_365d", "observed": 0.048584990203380585, "passed": true, "reason_code": null, "threshold": 0.05},
+    {"comparator": "less_than_or_equal", "estimator": "baseline", "gate_id": "calibration_730d", "observed": 0.1147201731801033, "passed": false, "reason_code": "baseline.calibration_730d.failed", "threshold": 0.05},
+    {"comparator": "less_than_or_equal", "estimator": "baseline", "gate_id": "supported_slice_calibration", "observed": 0.7781025598530199, "passed": false, "reason_code": "baseline.supported_slice_calibration.failed", "threshold": 0.1},
+    {"comparator": "greater_than_or_equal", "estimator": "baseline", "gate_id": "estimate_coverage", "observed": 1.0, "passed": true, "reason_code": null, "threshold": 0.8},
+    {"comparator": "less_than_or_equal", "estimator": "challenger", "gate_id": "calibration_365d", "observed": 0.017400313168764114, "passed": true, "reason_code": null, "threshold": 0.05},
+    {"comparator": "less_than_or_equal", "estimator": "challenger", "gate_id": "calibration_730d", "observed": 0.08093826472759247, "passed": false, "reason_code": "challenger.calibration_730d.failed", "threshold": 0.05},
+    {"comparator": "less_than_or_equal", "estimator": "challenger", "gate_id": "supported_slice_calibration", "observed": 0.525208009291115, "passed": false, "reason_code": "challenger.supported_slice_calibration.failed", "threshold": 0.1},
+    {"comparator": "greater_than_or_equal", "estimator": "challenger", "gate_id": "estimate_coverage", "observed": 1.0, "passed": true, "reason_code": null, "threshold": 0.8},
+    {"comparator": "greater_than_or_equal", "estimator": "challenger", "gate_id": "ibs_improvement", "observed": 0.13766216519804508, "passed": true, "reason_code": null, "threshold": 0.05},
+    {"comparator": "greater_than", "estimator": "challenger", "gate_id": "bootstrap_lower", "observed": 0.13633829793121668, "passed": true, "reason_code": null, "threshold": 0.0}
+  ],
+  "contract_version": 2,
+  "evidence_scope": "final_holdout",
+  "policy_digest": "ea1e79ea0c277a6acd9b94a12bdda83840c0607a807b4f75a6eb8876b1906bc5",
+  "policy_id": "individual-intake-duration-v2",
+  "shipping_policy": {"baseline_passes": false, "challenger_passes": false, "challenger_wins": false, "champion": "descriptive_only"},
+  "source_evidence": "aggregate_metrics_only"
+}

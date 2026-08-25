@@ -1,0 +1,55 @@
+# Product
+
+## Platform
+
+web
+
+## Users
+
+Legal-operations leaders monitor nationwide federal civil portfolio workload and data coverage. Matter planners compare governed observed cohorts and test explicit synthetic staffing and budget assumptions.
+
+## Product Purpose
+
+Provide audit-friendly portfolio operations analytics from public court metadata. Success means users can understand pending inventory, historical cohort behavior, source coverage, forecast limitations, and scenario consequences without mistaking any output for legal advice or a matter-specific prediction.
+
+## Positioning
+
+The product makes failed evidence visible and useful: capability-level readiness permits verified operations analytics while typed refusals prevent failed duration models or absent docket events from becoming claims.
+
+## Operating Context
+
+Users work in portfolio reviews and matter-planning sessions. They move between a nationwide portfolio view, observed cohort benchmarks, provenance, forecast refusal evidence, and synthetic resource sensitivities. Every measure carries source date, method, support, and limitation.
+
+## Capabilities and Constraints
+
+- Observed FJC portfolio, pending-inventory, and cohort analytics.
+- Reviewed RECAP docket match coverage; docket-event enrichment disabled because event-entry fields are absent.
+- Typed duration forecast refusal; no model artifact is promoted.
+- Deterministic synthetic staffing and budget scenarios from bounded user assumptions.
+- Offline public demonstration; no live BigQuery, credentials, party, judge, attorney, or document-text data.
+- Product is not legal advice. Historical benchmarks are not predictions. Scenario amounts are not real cost forecasts.
+
+## Brand Commitments
+
+Use plain operational language and the approved calm, precise, restrained, audit-friendly design language. Avoid courtroom drama, generic prediction certainty, and marketing filler.
+
+## Evidence on Hand
+
+- Verified FJC and AO population metrics documented in `README.md` and `docs/`.
+- M7 model failures documented in `docs/survival-model.md`.
+- M8 event availability documented in `docs/milestone-enrichment.md`.
+- M9 scenario contract documented in `docs/synthetic-scenarios.md`.
+- M10 API contract documented in `docs/api.md`.
+- No testimonials, customers, observed legal-cost dataset, passing duration model, or public deployment claim exists.
+
+## Product Principles
+
+1. Refusal is a first-class result.
+2. Observed, modeled, and synthetic information never share an unlabeled visual treatment.
+3. Every number remains auditable to source, method, period, support, and limitation.
+4. Useful operations analytics may remain available when a separate capability fails.
+5. Users retain legal and operational judgment.
+
+## Accessibility & Inclusion
+
+Target WCAG 2.2 AA contrast, keyboard operation, visible focus, semantic landmarks, reduced motion, responsive layouts, and text summaries for charts.

@@ -1,0 +1,22 @@
+version = 1
+
+[fjc_civil]
+source_id = "fjc_civil_cumulative"
+snapshot_cutoff = "2026-03-31"
+partition_field = "filing_year"
+contract_version = 3
+source_columns = ["CIRCUIT", "DISTRICT", "OFFICE", "DOCKET", "ORIGIN", "FILEDATE", "FDATEUSE", "JURIS", "NOS", "TITL", "SECTION", "SUBSECT", "RESIDENC", "JURY", "CLASSACT", "DEMANDED", "FILEJUDG", "FILEMAG", "COUNTY", "ARBIT", "MDLDOCK", "PLT", "DEF", "TRANSDAT", "TRANSOFF", "TRANSDOC", "TRANSORG", "TERMDATE", "TDATEUSE", "TRCLACT", "TERMJUDG", "TERMMAG", "PROCPROG", "DISP", "NOJ", "AMTREC", "JUDGMENT", "DJOINED", "PRETRIAL", "TRIBEGAN", "TRIALEND", "TRMARB", "PROSE", "IFP", "STATUSCD", "TAPEYEAR"]
+selected_columns = ["CIRCUIT", "DISTRICT", "OFFICE", "DOCKET", "ORIGIN", "FILEDATE", "FDATEUSE", "JURIS", "NOS", "TITL", "SECTION", "SUBSECT", "RESIDENC", "JURY", "CLASSACT", "DEMANDED", "COUNTY", "ARBIT", "MDLDOCK", "TRANSDAT", "TRANSOFF", "TRANSDOC", "TRANSORG", "TERMDATE", "TDATEUSE", "TRCLACT", "PROCPROG", "DISP", "NOJ", "AMTREC", "JUDGMENT", "DJOINED", "PRETRIAL", "TRIBEGAN", "TRIALEND", "TRMARB", "PROSE", "IFP", "STATUSCD", "TAPEYEAR"]
+
+[gcs]
+bucket_env = "GCS_SOURCE_BUCKET"
+object_prefix = "standardized/v1/source_id=fjc_civil_cumulative"
+create_only = true
+
+[bigquery]
+project_env = "GOOGLE_CLOUD_PROJECT"
+dataset_env = "BIGQUERY_RAW_DATASET"
+table = "raw_fjc_civil_cases_v1"
+partition_field = "source_snapshot_cutoff"
+cluster_fields = ["DISTRICT", "filing_year", "NOS"]
+write_disposition = "WRITE_EMPTY"

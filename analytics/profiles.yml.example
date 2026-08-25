@@ -1,0 +1,15 @@
+federal_civil_litigation:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: "{{ env_var('DBT_LOCAL_DATABASE', '/tmp/federal-civil-litigation.duckdb') }}"
+      schema: analytics
+      threads: 4
+    bigquery:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('GOOGLE_CLOUD_PROJECT') }}"
+      dataset: "{{ env_var('BIGQUERY_ANALYTICS_DATASET') }}"
+      location: us-central1
+      threads: 4

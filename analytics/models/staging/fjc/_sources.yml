@@ -1,0 +1,44 @@
+version: 2
+
+sources:
+  - name: raw_fjc
+    description: Private FJC cumulative civil raw contract and immutable run metadata.
+    schema: "{{ env_var('BIGQUERY_RAW_DATASET', 'federal_civil_case_planner') }}"
+    tables:
+      - name: civil_records
+        identifier: raw_fjc_civil_cases_v1
+        description: One FJC statistical record retained by raw contract v3.
+        config:
+          external_location: "read_parquet('{{ env_var('FJC_RAW_PARQUET_GLOB', '/private/fjc/filing_year=*/*.parquet') }}', hive_partitioning=false)"
+        columns:
+          - name: source_row_number
+            tests: [not_null]
+          - name: source_digest
+            tests: [not_null]
+          - name: raw_contract_version
+            tests:
+              - not_null
+              - accepted_values:
+                  values: [3]
+                  quote: false
+          - name: STATUSCD
+            tests:
+              - not_null
+              - accepted_values:
+                  values: [L, S]
+      - name: run_metadata
+        identifier: raw_source_manifests
+        description: Immutable raw run completion metadata used for operational freshness.
+        config:
+          external_location: "read_json_auto('{{ env_var('FJC_RAW_SUCCESS_JSON', '/private/fjc/_SUCCESS.json') }}')"
+        loaded_at_field: completed_at_utc
+        freshness:
+          warn_after: {count: 150, period: day}
+          error_after: {count: 365, period: day}
+        columns:
+          - name: source_id
+            tests: [not_null]
+          - name: status
+            tests:
+              - accepted_values:
+                  values: [completed]

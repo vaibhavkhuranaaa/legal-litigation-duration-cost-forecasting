@@ -1,0 +1,484 @@
+version = 1
+
+[reconciliation]
+contract_version = 1
+fjc_snapshot_cutoff = "2026-03-31"
+recap_snapshot_cutoff = "2026-06-30"
+population_start = "2010-01-01"
+match_rule_id = "exact-court-office-docket-filed-v1"
+review_sample_size = 800
+review_confidence = 0.95
+precision_threshold = 0.995
+ao_period_start = "2025-04-01"
+ao_period_end = "2026-03-31"
+ao_total_relative_difference_threshold = 0.005
+
+[[district]]
+code = "00"
+court_id = "med"
+ao_label = "ME"
+
+[[district]]
+code = "01"
+court_id = "mad"
+ao_label = "MA"
+
+[[district]]
+code = "02"
+court_id = "nhd"
+ao_label = "NH"
+
+[[district]]
+code = "03"
+court_id = "rid"
+ao_label = "RI"
+
+[[district]]
+code = "04"
+court_id = "prd"
+ao_label = "PR"
+
+[[district]]
+code = "05"
+court_id = "ctd"
+ao_label = "CT"
+
+[[district]]
+code = "06"
+court_id = "nynd"
+ao_label = "NY,N"
+
+[[district]]
+code = "07"
+court_id = "nyed"
+ao_label = "NY,E"
+
+[[district]]
+code = "08"
+court_id = "nysd"
+ao_label = "NY,S"
+
+[[district]]
+code = "09"
+court_id = "nywd"
+ao_label = "NY,W"
+
+[[district]]
+code = "10"
+court_id = "vtd"
+ao_label = "VT"
+
+[[district]]
+code = "11"
+court_id = "ded"
+ao_label = "DE"
+
+[[district]]
+code = "12"
+court_id = "njd"
+ao_label = "NJ"
+
+[[district]]
+code = "13"
+court_id = "paed"
+ao_label = "PA,E"
+
+[[district]]
+code = "14"
+court_id = "pamd"
+ao_label = "PA,M"
+
+[[district]]
+code = "15"
+court_id = "pawd"
+ao_label = "PA,W"
+
+[[district]]
+code = "16"
+court_id = "mdd"
+ao_label = "MD"
+
+[[district]]
+code = "17"
+court_id = "nced"
+ao_label = "NC,E"
+
+[[district]]
+code = "18"
+court_id = "ncmd"
+ao_label = "NC,M"
+
+[[district]]
+code = "19"
+court_id = "ncwd"
+ao_label = "NC,W"
+
+[[district]]
+code = "20"
+court_id = "scd"
+ao_label = "SC"
+
+[[district]]
+code = "22"
+court_id = "vaed"
+ao_label = "VA,E"
+
+[[district]]
+code = "23"
+court_id = "vawd"
+ao_label = "VA,W"
+
+[[district]]
+code = "24"
+court_id = "wvnd"
+ao_label = "WV,N"
+
+[[district]]
+code = "25"
+court_id = "wvsd"
+ao_label = "WV,S"
+
+[[district]]
+code = "26"
+court_id = "alnd"
+ao_label = "AL,N"
+
+[[district]]
+code = "27"
+court_id = "almd"
+ao_label = "AL,M"
+
+[[district]]
+code = "28"
+court_id = "alsd"
+ao_label = "AL,S"
+
+[[district]]
+code = "29"
+court_id = "flnd"
+ao_label = "FL,N"
+
+[[district]]
+code = "3A"
+court_id = "flmd"
+ao_label = "FL,M"
+
+[[district]]
+code = "3C"
+court_id = "flsd"
+ao_label = "FL,S"
+
+[[district]]
+code = "3E"
+court_id = "gand"
+ao_label = "GA,N"
+
+[[district]]
+code = "3G"
+court_id = "gamd"
+ao_label = "GA,M"
+
+[[district]]
+code = "3J"
+court_id = "gasd"
+ao_label = "GA,S"
+
+[[district]]
+code = "3L"
+court_id = "laed"
+ao_label = "LA,E"
+
+[[district]]
+code = "3N"
+court_id = "lamd"
+ao_label = "LA,M"
+
+[[district]]
+code = "36"
+court_id = "lawd"
+ao_label = "LA,W"
+
+[[district]]
+code = "37"
+court_id = "msnd"
+ao_label = "MS,N"
+
+[[district]]
+code = "38"
+court_id = "mssd"
+ao_label = "MS,S"
+
+[[district]]
+code = "39"
+court_id = "txnd"
+ao_label = "TX,N"
+
+[[district]]
+code = "40"
+court_id = "txed"
+ao_label = "TX,E"
+
+[[district]]
+code = "41"
+court_id = "txsd"
+ao_label = "TX,S"
+
+[[district]]
+code = "42"
+court_id = "txwd"
+ao_label = "TX,W"
+
+[[district]]
+code = "43"
+court_id = "kyed"
+ao_label = "KY,E"
+
+[[district]]
+code = "44"
+court_id = "kywd"
+ao_label = "KY,W"
+
+[[district]]
+code = "45"
+court_id = "mied"
+ao_label = "MI,E"
+
+[[district]]
+code = "46"
+court_id = "miwd"
+ao_label = "MI,W"
+
+[[district]]
+code = "47"
+court_id = "ohnd"
+ao_label = "OH,N"
+
+[[district]]
+code = "48"
+court_id = "ohsd"
+ao_label = "OH,S"
+
+[[district]]
+code = "49"
+court_id = "tned"
+ao_label = "TN,E"
+
+[[district]]
+code = "50"
+court_id = "tnmd"
+ao_label = "TN,M"
+
+[[district]]
+code = "51"
+court_id = "tnwd"
+ao_label = "TN,W"
+
+[[district]]
+code = "52"
+court_id = "ilnd"
+ao_label = "IL,N"
+
+[[district]]
+code = "53"
+court_id = "ilcd"
+ao_label = "IL,C"
+
+[[district]]
+code = "54"
+court_id = "ilsd"
+ao_label = "IL,S"
+
+[[district]]
+code = "55"
+court_id = "innd"
+ao_label = "IN,N"
+
+[[district]]
+code = "56"
+court_id = "insd"
+ao_label = "IN,S"
+
+[[district]]
+code = "57"
+court_id = "wied"
+ao_label = "WI,E"
+
+[[district]]
+code = "58"
+court_id = "wiwd"
+ao_label = "WI,W"
+
+[[district]]
+code = "60"
+court_id = "ared"
+ao_label = "AR,E"
+
+[[district]]
+code = "61"
+court_id = "arwd"
+ao_label = "AR,W"
+
+[[district]]
+code = "62"
+court_id = "iand"
+ao_label = "IA,N"
+
+[[district]]
+code = "63"
+court_id = "iasd"
+ao_label = "IA,S"
+
+[[district]]
+code = "64"
+court_id = "mnd"
+ao_label = "MN"
+
+[[district]]
+code = "65"
+court_id = "moed"
+ao_label = "MO,E"
+
+[[district]]
+code = "66"
+court_id = "mowd"
+ao_label = "MO,W"
+
+[[district]]
+code = "67"
+court_id = "ned"
+ao_label = "NE"
+
+[[district]]
+code = "68"
+court_id = "ndd"
+ao_label = "ND"
+
+[[district]]
+code = "69"
+court_id = "sdd"
+ao_label = "SD"
+
+[[district]]
+code = "7-"
+court_id = "akd"
+ao_label = "AK"
+
+[[district]]
+code = "70"
+court_id = "azd"
+ao_label = "AZ"
+
+[[district]]
+code = "71"
+court_id = "cand"
+ao_label = "CA,N"
+
+[[district]]
+code = "72"
+court_id = "caed"
+ao_label = "CA,E"
+
+[[district]]
+code = "73"
+court_id = "cacd"
+ao_label = "CA,C"
+
+[[district]]
+code = "74"
+court_id = "casd"
+ao_label = "CA,S"
+
+[[district]]
+code = "75"
+court_id = "hid"
+ao_label = "HI"
+
+[[district]]
+code = "76"
+court_id = "idd"
+ao_label = "ID"
+
+[[district]]
+code = "77"
+court_id = "mtd"
+ao_label = "MT"
+
+[[district]]
+code = "78"
+court_id = "nvd"
+ao_label = "NV"
+
+[[district]]
+code = "79"
+court_id = "ord"
+ao_label = "OR"
+
+[[district]]
+code = "80"
+court_id = "waed"
+ao_label = "WA,E"
+
+[[district]]
+code = "81"
+court_id = "wawd"
+ao_label = "WA,W"
+
+[[district]]
+code = "82"
+court_id = "cod"
+ao_label = "CO"
+
+[[district]]
+code = "83"
+court_id = "ksd"
+ao_label = "KS"
+
+[[district]]
+code = "84"
+court_id = "nmd"
+ao_label = "NM"
+
+[[district]]
+code = "85"
+court_id = "oknd"
+ao_label = "OK,N"
+
+[[district]]
+code = "86"
+court_id = "oked"
+ao_label = "OK,E"
+
+[[district]]
+code = "87"
+court_id = "okwd"
+ao_label = "OK,W"
+
+[[district]]
+code = "88"
+court_id = "utd"
+ao_label = "UT"
+
+[[district]]
+code = "89"
+court_id = "wyd"
+ao_label = "WY"
+
+[[district]]
+code = "90"
+court_id = "dcd"
+ao_label = "DC"
+
+[[district]]
+code = "91"
+court_id = "vid"
+ao_label = "VI"
+
+[[district]]
+code = "93"
+court_id = "gud"
+ao_label = "GU"
+
+[[district]]
+code = "94"
+court_id = "nmid"
+ao_label = "NMI"

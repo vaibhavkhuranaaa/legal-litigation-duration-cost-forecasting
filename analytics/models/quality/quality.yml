@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: contract_failure_fixture
+    description: Disabled fixture enabled only when CI verifies dbt rejects a public-model contract violation.
+    config:
+      enabled: "{{ var('enable_contract_failure_fixture', false) }}"
+      contract:
+        enforced: true
+    columns:
+      - name: must_be_boolean
+        data_type: boolean

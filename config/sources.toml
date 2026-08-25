@@ -1,0 +1,113 @@
+version = 1
+
+[[source]]
+id = "fjc_civil_cumulative"
+name = "FJC IDB civil cumulative file"
+url = "https://www.fjc.gov/sites/default/files/idb/textfiles/cv88on_0.zip"
+filename = "cv88on_0.zip"
+snapshot_cutoff = "2026-03-31"
+kind = "tabular_zip"
+max_bytes = 400000000
+terms_url = "https://www.fjc.gov/research/idb"
+required_columns = ["CIRCUIT", "DISTRICT", "OFFICE", "DOCKET", "ORIGIN", "FILEDATE", "FDATEUSE", "JURIS", "NOS", "TERMDATE", "TDATEUSE", "PROCPROG", "DISP", "STATUSCD", "TAPEYEAR"]
+
+[[source]]
+id = "fjc_civil_codebook"
+name = "FJC IDB civil codebook"
+url = "https://www.fjc.gov/sites/default/files/idb/codebooks/Civil%20Codebook%201988%20Forward%2010252023.pdf"
+filename = "civil-codebook-1988-forward-2023-10-25.pdf"
+snapshot_cutoff = "2023-10-25"
+kind = "pdf"
+max_bytes = 5000000
+terms_url = "https://www.fjc.gov/research/idb"
+
+[[source]]
+id = "fjc_idb_research_guide"
+name = "FJC IDB research guide"
+url = "https://www.fjc.gov/sites/default/files/IDB-Research-Guide.pdf"
+filename = "IDB-Research-Guide.pdf"
+snapshot_cutoff = "2019-07-22"
+kind = "pdf"
+max_bytes = 5000000
+terms_url = "https://www.fjc.gov/research/idb"
+
+[[source]]
+id = "ao_civil_c"
+name = "AO table C: civil cases filed, terminated, and pending"
+url = "https://www.uscourts.gov/sites/default/files/document/fjcs_c_0331.2026.xlsx"
+filename = "fjcs_c_0331.2026.xlsx"
+snapshot_cutoff = "2026-03-31"
+kind = "xlsx"
+max_bytes = 2000000
+terms_url = "https://www.uscourts.gov/statistics-reports/caseload-statistics-data-tables"
+
+[[source]]
+id = "ao_civil_c1"
+name = "AO table C-1: civil cases by jurisdiction"
+url = "https://www.uscourts.gov/sites/default/files/document/fjcs_c1_0331.2026.xlsx"
+filename = "fjcs_c1_0331.2026.xlsx"
+snapshot_cutoff = "2026-03-31"
+kind = "xlsx"
+max_bytes = 2000000
+terms_url = "https://www.uscourts.gov/statistics-reports/caseload-statistics-data-tables"
+
+[[source]]
+id = "ao_civil_c3"
+name = "AO table C-3: civil cases by jurisdiction, nature, and district"
+url = "https://www.uscourts.gov/sites/default/files/document/fjcs_c3_0331.2026.xlsx"
+filename = "fjcs_c3_0331.2026.xlsx"
+snapshot_cutoff = "2026-03-31"
+kind = "xlsx"
+max_bytes = 2000000
+terms_url = "https://www.uscourts.gov/statistics-reports/caseload-statistics-data-tables"
+
+[[source]]
+id = "ao_civil_c2"
+name = "AO table C-2: civil filings by jurisdiction and nature"
+url = "https://www.uscourts.gov/sites/default/files/document/fjcs_c2_0331.2026.xlsx"
+filename = "fjcs_c2_0331.2026.xlsx"
+snapshot_cutoff = "2026-03-31"
+kind = "xlsx"
+max_bytes = 2000000
+terms_url = "https://www.uscourts.gov/statistics-reports/caseload-statistics-data-tables"
+
+[[source]]
+id = "ao_civil_c4"
+name = "AO table C-4: civil terminations by nature and action"
+url = "https://www.uscourts.gov/sites/default/files/document/fjcs_c4_0331.2026.xlsx"
+filename = "fjcs_c4_0331.2026.xlsx"
+snapshot_cutoff = "2026-03-31"
+kind = "xlsx"
+max_bytes = 2000000
+terms_url = "https://www.uscourts.gov/statistics-reports/caseload-statistics-data-tables"
+
+[[source]]
+id = "ao_civil_c5"
+name = "AO table C-5: median filing-to-disposition time"
+url = "https://www.uscourts.gov/sites/default/files/document/fjcs_c5_0331.2026.xlsx"
+filename = "fjcs_c5_0331.2026.xlsx"
+snapshot_cutoff = "2026-03-31"
+kind = "xlsx"
+max_bytes = 2000000
+terms_url = "https://www.uscourts.gov/statistics-reports/caseload-statistics-data-tables"
+
+[[source]]
+id = "ao_district_profile"
+name = "AO federal court management statistics district profiles"
+url = "https://www.uscourts.gov/sites/default/files/document/fcms_na_distprofile0331.2026.xlsx"
+filename = "fcms_na_distprofile0331.2026.xlsx"
+snapshot_cutoff = "2026-03-31"
+kind = "xlsx"
+max_bytes = 2000000
+terms_url = "https://www.uscourts.gov/data-news/reports/statistical-reports/federal-court-management-statistics/federal-court-management-statistics-march-2026"
+
+[[source]]
+id = "courtlistener_recap_dockets"
+name = "CourtListener RECAP bulk dockets"
+url = "https://com-courtlistener-storage.s3-us-west-2.amazonaws.com/bulk-data/dockets-2026-06-30.csv.bz2"
+filename = "dockets-2026-06-30.csv.bz2"
+snapshot_cutoff = "2026-06-30"
+kind = "csv_bz2"
+max_bytes = 10737418240
+terms_url = "https://wiki.free.law/c/terms/courtlistener/courtlistenercom-terms-of-service-and-policies"
+required_columns = ["id", "court_id", "date_filed", "date_terminated", "docket_number", "nature_of_suit"]

@@ -1,0 +1,201 @@
+version: 2
+
+models:
+  - name: fct_federal_civil_statistical_records
+    description: Governed FJC statistical-record mart. It preserves all eligible raw rows and labels natural-key collisions and unsupported nature codes instead of silently deduplicating them.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - {name: source_record_identifier, data_type: string, constraints: [{type: not_null}], tests: [unique]}
+      - {name: natural_case_identifier, data_type: string, constraints: [{type: not_null}]}
+      - {name: source_row_number, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: circuit_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: district_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: office_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: docket_number, data_type: string, constraints: [{type: not_null}]}
+      - {name: filed_date, data_type: date, constraints: [{type: not_null}]}
+      - {name: filed_date_used_by_ao, data_type: date, constraints: [{type: not_null}]}
+      - {name: terminated_date, data_type: date}
+      - {name: termination_date_used_by_ao, data_type: date}
+      - {name: censoring_date, data_type: date}
+      - {name: analysis_end_date, data_type: date, constraints: [{type: not_null}]}
+      - {name: duration_days, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: event_observed, data_type: boolean, constraints: [{type: not_null}]}
+      - {name: nature_of_suit_raw, data_type: string, constraints: [{type: not_null}]}
+      - {name: title_raw, data_type: string}
+      - {name: section_raw, data_type: string}
+      - {name: subsection_raw, data_type: string}
+      - {name: jury_demand_raw, data_type: string}
+      - {name: mdl_docket_raw, data_type: string}
+      - name: nature_of_suit_code
+        data_type: string
+        tests:
+          - relationships:
+              to: ref('dim_nature_of_suit')
+              field: nature_of_suit_code
+      - {name: nature_of_suit_label, data_type: string}
+      - {name: nature_of_suit_family, data_type: string}
+      - {name: nature_of_suit_mapping_status, data_type: string, constraints: [{type: not_null}], tests: [{accepted_values: {values: [supported, unsupported]}}]}
+      - {name: nature_of_suit_rule_version, data_type: string}
+      - {name: jurisdiction_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: origin_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: intake_procedural_cohort, data_type: string, constraints: [{type: not_null}], tests: [{accepted_values: {values: [multidistrict_litigation, social_security_review, ordinary_original, other_procedural_origin]}}]}
+      - {name: procedural_progress_code, data_type: string}
+      - {name: disposition_code, data_type: string}
+      - {name: identity_quality_status, data_type: string, constraints: [{type: not_null}], tests: [{accepted_values: {values: [canonical, collision]}}]}
+      - {name: source_record_count, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: statistical_year, data_type: string, constraints: [{type: not_null}]}
+      - {name: source_snapshot_cutoff, data_type: date, constraints: [{type: not_null}]}
+      - {name: source_digest, data_type: string, constraints: [{type: not_null}]}
+      - {name: raw_contract_version, data_type: bigint, constraints: [{type: not_null}]}
+
+  - name: fct_federal_civil_cases
+    description: Collision-free current-snapshot case mart. Natural identifiers occurring more than once are blocked and exposed through the exception mart.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - {name: case_identifier, data_type: string, constraints: [{type: not_null}], tests: [unique]}
+      - name: source_record_identifier
+        data_type: string
+        constraints: [{type: not_null}]
+        tests:
+          - unique
+          - relationships:
+              to: ref('fct_federal_civil_statistical_records')
+              field: source_record_identifier
+      - {name: circuit_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: district_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: office_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: docket_number, data_type: string, constraints: [{type: not_null}]}
+      - {name: filed_date, data_type: date, constraints: [{type: not_null}]}
+      - {name: terminated_date, data_type: date}
+      - {name: censoring_date, data_type: date}
+      - {name: analysis_end_date, data_type: date, constraints: [{type: not_null}]}
+      - {name: duration_days, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: event_observed, data_type: boolean, constraints: [{type: not_null}]}
+      - {name: nature_of_suit_raw, data_type: string, constraints: [{type: not_null}]}
+      - {name: title_raw, data_type: string}
+      - {name: section_raw, data_type: string}
+      - {name: subsection_raw, data_type: string}
+      - {name: jury_demand_raw, data_type: string}
+      - {name: mdl_docket_raw, data_type: string}
+      - name: nature_of_suit_code
+        data_type: string
+        tests:
+          - relationships:
+              to: ref('dim_nature_of_suit')
+              field: nature_of_suit_code
+      - {name: nature_of_suit_label, data_type: string}
+      - {name: nature_of_suit_family, data_type: string}
+      - {name: nature_of_suit_mapping_status, data_type: string, constraints: [{type: not_null}]}
+      - {name: jurisdiction_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: origin_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: intake_procedural_cohort, data_type: string, constraints: [{type: not_null}]}
+      - {name: source_snapshot_cutoff, data_type: date, constraints: [{type: not_null}]}
+      - {name: source_digest, data_type: string, constraints: [{type: not_null}]}
+
+  - name: fct_fjc_identity_exceptions
+    description: Every FJC statistical record whose documented natural identifier collides in the current snapshot.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - {name: natural_case_identifier, data_type: string, constraints: [{type: not_null}]}
+      - name: source_record_identifier
+        data_type: string
+        constraints: [{type: not_null}]
+        tests:
+          - unique
+          - relationships:
+              to: ref('fct_federal_civil_statistical_records')
+              field: source_record_identifier
+      - {name: source_record_count, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: circuit_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: district_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: office_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: docket_number, data_type: string, constraints: [{type: not_null}]}
+      - {name: filed_date, data_type: date, constraints: [{type: not_null}]}
+      - {name: terminated_date, data_type: date}
+      - {name: censoring_date, data_type: date}
+      - {name: event_observed, data_type: boolean, constraints: [{type: not_null}]}
+      - {name: nature_of_suit_raw, data_type: string, constraints: [{type: not_null}]}
+      - {name: origin_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: disposition_code, data_type: string}
+      - {name: source_snapshot_cutoff, data_type: date, constraints: [{type: not_null}]}
+      - {name: source_digest, data_type: string, constraints: [{type: not_null}]}
+
+  - name: dim_nature_of_suit
+    description: Codebook-supported nature-of-suit dimension with explicit analytical families and version provenance.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - {name: nature_of_suit_code, data_type: string, constraints: [{type: not_null}], tests: [unique]}
+      - {name: nature_of_suit_label, data_type: string, constraints: [{type: not_null}]}
+      - {name: nature_of_suit_family, data_type: string, constraints: [{type: not_null}]}
+      - {name: codebook_as_of_date, data_type: date, constraints: [{type: not_null}]}
+      - {name: rule_version, data_type: string, constraints: [{type: not_null}]}
+
+  - name: fct_fjc_recap_match_candidates
+    description: Exact FJC and RECAP candidate pairs. Rows remain unpromoted until blinded review passes the precision gate.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - {name: case_identifier, data_type: string, constraints: [{type: not_null}]}
+      - {name: source_record_identifier, data_type: string, constraints: [{type: not_null}]}
+      - {name: recap_docket_id, data_type: string, constraints: [{type: not_null}]}
+      - {name: district_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: court_id, data_type: string, constraints: [{type: not_null}]}
+      - {name: office_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: docket_number_core, data_type: string, constraints: [{type: not_null}]}
+      - {name: filed_date, data_type: date, constraints: [{type: not_null}]}
+      - {name: fjc_terminated_date, data_type: date}
+      - {name: recap_terminated_date, data_type: date}
+      - {name: fjc_nature_of_suit, data_type: string, constraints: [{type: not_null}]}
+      - {name: recap_nature_of_suit, data_type: string}
+      - {name: idb_data_id, data_type: string}
+      - {name: pacer_case_id, data_type: string}
+      - {name: recap_candidates_for_fjc, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: fjc_candidates_for_recap, data_type: bigint, constraints: [{type: not_null}]}
+      - name: candidate_status
+        data_type: string
+        constraints: [{type: not_null}]
+        tests:
+          - accepted_values:
+              values: [collision, evidence_conflict, review_eligible]
+      - {name: fjc_source_digest, data_type: string, constraints: [{type: not_null}]}
+      - {name: recap_source_digest, data_type: string, constraints: [{type: not_null}]}
+      - {name: reconciliation_contract_version, data_type: bigint, constraints: [{type: not_null}]}
+
+  - name: fct_ao_caseflow_reconciliation
+    description: Cell-level AO Table C comparison to the complete FJC population using predeclared tolerances.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - {name: district_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: measure, data_type: string, constraints: [{type: not_null}]}
+      - {name: ao_value, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: fjc_value, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: difference, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: relative_difference, data_type: double, constraints: [{type: not_null}]}
+      - {name: tolerance, data_type: double, constraints: [{type: not_null}]}
+      - {name: required_for_gate, data_type: boolean, constraints: [{type: not_null}]}
+      - {name: passed, data_type: boolean, constraints: [{type: not_null}]}
+      - {name: reason_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: disposition, data_type: string, constraints: [{type: not_null}]}
+
+  - name: fct_ao_scope_bridge
+    description: Explicit bridge from complete FJC Table C population counts to the 2010-plus product warehouse.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - {name: measure, data_type: string, constraints: [{type: not_null}], tests: [unique]}
+      - {name: complete_snapshot_value, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: product_value, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: excluded_or_quarantined_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: explanation, data_type: string, constraints: [{type: not_null}]}

@@ -1,0 +1,92 @@
+version = 3
+status = "sealed_pending_source"
+declared_on = "2026-08-17"
+source_relation = "analytics.mart_comparable_cases"
+required_snapshot_cutoff = "2026-06-30"
+development_outcomes_end = "2024-03-31"
+final_holdout_start = "2024-04-01"
+final_holdout_end = "2024-06-30"
+horizons_days = [365, 730]
+brier_grid_days = [30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 365, 395, 425, 455, 485, 515, 545, 575, 605, 635, 665, 695, 730]
+bootstrap_replicates = 400
+random_seed = 20260817
+final_score_attempts = 1
+intake_features = ["district_code", "nature_family", "jurisdiction_code", "origin_code", "filing_year", "filing_quarter"]
+forbidden_features = ["terminated_date", "duration_days", "event_observed", "disposition", "recap_event", "judge", "party", "post_filing_feature"]
+
+[gates]
+calibration_error_12m = 0.05
+calibration_error_24m = 0.05
+slice_calibration_error = 0.10
+minimum_slice_cases = 200
+estimate_coverage = 0.80
+challenger_ibs_improvement = 0.05
+challenger_bootstrap_lower = 0.0
+
+[baseline]
+estimator = "kaplan_meier"
+final_fit_start = "2010-01-01"
+final_fit_end = "2024-03-31"
+recent_window_start = "2021-04-01"
+minimum_training_cases = 500
+fallback_hierarchy = ["exact", "district_nature_origin", "district_nature", "nature_jurisdiction_origin", "nature", "global"]
+calibration_method = "cross_fitted_positive_logit_affine"
+
+[support]
+method = "rolling_oof_certification"
+minimum_training_cases = 500
+minimum_validation_cases = 200
+maximum_validation_slice_error = 0.10
+require_certified_fallback = true
+unseen_category_behavior = "abstain"
+unsupported_nature_behavior = "abstain"
+
+[challenger]
+estimator = "xgboost_aft"
+distribution = "normal"
+aft_loss_distribution_scale = 1.0
+max_depth = 6
+learning_rate = 0.05
+max_rounds = 500
+early_stopping_rounds = 30
+min_child_weight = 50
+subsample = 0.8
+colsample_bytree = 0.9
+nthread = 4
+calibration_method = "cross_fitted_positive_logit_affine"
+
+[[development_fold]]
+name = "fold_2020"
+train_start = "2010-01-01"
+train_end = "2019-03-31"
+validation_start = "2019-04-01"
+validation_end = "2020-03-31"
+assessment_start = "2020-04-01"
+assessment_end = "2021-03-31"
+
+[[development_fold]]
+name = "fold_2021"
+train_start = "2010-01-01"
+train_end = "2020-03-31"
+validation_start = "2020-04-01"
+validation_end = "2021-03-31"
+assessment_start = "2021-04-01"
+assessment_end = "2022-03-31"
+
+[[development_fold]]
+name = "fold_2022"
+train_start = "2010-01-01"
+train_end = "2021-03-31"
+validation_start = "2021-04-01"
+validation_end = "2022-03-31"
+assessment_start = "2022-04-01"
+assessment_end = "2023-03-31"
+
+[[development_fold]]
+name = "fold_2023"
+train_start = "2010-01-01"
+train_end = "2022-03-31"
+validation_start = "2022-04-01"
+validation_end = "2023-03-31"
+assessment_start = "2023-04-01"
+assessment_end = "2024-03-31"

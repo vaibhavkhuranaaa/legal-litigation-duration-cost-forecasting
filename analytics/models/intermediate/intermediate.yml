@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: int_fjc_record_semantics
+    description: One FJC statistical record with source-record lineage, documented natural key candidate, and right-censoring semantics.
+    columns:
+      - name: source_record_identifier
+        tests: [not_null, unique]
+      - name: natural_case_identifier
+        tests: [not_null]
+      - name: event_observed
+        tests: [not_null]
+      - name: analysis_end_date
+        tests: [not_null]
+      - name: duration_days
+        tests: [not_null]
+  - name: int_fjc_identity_quality
+    description: Statistical records marked canonical only when the FJC documented natural identifier occurs once in the current source.
+    columns:
+      - name: source_record_identifier
+        tests: [not_null, unique]
+      - name: identity_quality_status
+        tests:
+          - accepted_values:
+              values: [canonical, collision]
+  - name: int_nature_of_suit_mapping
+    description: Exact codebook-supported nature-of-suit mapping. Numeric ranges do not infer membership.
+    columns:
+      - name: raw_code
+        tests: [not_null, unique]
+      - name: canonical_code
+        tests: [not_null, unique]
+      - name: label
+        tests: [not_null]
+      - name: family
+        tests: [not_null]
+      - name: rule_version
+        tests: [not_null]

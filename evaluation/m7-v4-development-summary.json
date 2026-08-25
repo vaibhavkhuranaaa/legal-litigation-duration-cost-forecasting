@@ -1,0 +1,67 @@
+{
+  "protocol_version": 4,
+  "capability_id": "portfolio_12m_resolution",
+  "prediction_unit": "aggregate filing cohort",
+  "evaluation_scope": "development_only",
+  "final_holdout_read": false,
+  "capability_status": "development_failed",
+  "gates": {
+    "overall_calibration_upper": 0.05,
+    "monthly_calibration_error": 0.05,
+    "estimate_coverage": 0.8,
+    "minimum_monthly_cases": 200,
+    "minimum_development_folds": 4
+  },
+  "folds": [
+    {
+      "fold_id": "fold_2020",
+      "as_of_date": "2020-03-31",
+      "training_cases": 786899,
+      "assessment_cases": 441490,
+      "overall_calibration_error": 0.24303072037735524,
+      "cluster_bootstrap_95": [0.14178065927725678, 0.316076367646348],
+      "maximum_monthly_calibration_error": 0.3790008691740713,
+      "estimate_coverage": 1.0,
+      "passes": false
+    },
+    {
+      "fold_id": "fold_2021",
+      "as_of_date": "2021-03-31",
+      "training_cases": 829815,
+      "assessment_cases": 286726,
+      "overall_calibration_error": 0.03937520376707804,
+      "cluster_bootstrap_95": [0.0029059558064067265, 0.09310288025026879],
+      "maximum_monthly_calibration_error": 0.1387354549163764,
+      "estimate_coverage": 1.0,
+      "passes": false
+    },
+    {
+      "fold_id": "fold_2022",
+      "as_of_date": "2022-03-31",
+      "training_cases": 1018032,
+      "assessment_cases": 265850,
+      "overall_calibration_error": 0.14461881213885025,
+      "cluster_bootstrap_95": [0.10756323454800995, 0.1845623305211854],
+      "maximum_monthly_calibration_error": 0.20711282209437448,
+      "estimate_coverage": 1.0,
+      "passes": false
+    },
+    {
+      "fold_id": "fold_2023",
+      "as_of_date": "2023-03-31",
+      "training_cases": 1040000,
+      "assessment_cases": 329617,
+      "overall_calibration_error": 0.11300584046729295,
+      "cluster_bootstrap_95": [0.06595296499989345, 0.1617605390045916],
+      "maximum_monthly_calibration_error": 0.22402682150805026,
+      "estimate_coverage": 1.0,
+      "passes": false
+    }
+  ],
+  "development_fold_pass_rate": 0.0,
+  "limitations": [
+    "The target is an aggregate filing-cohort rate, never an individual estimate.",
+    "The baseline uses only labels mature before each simulated prediction origin.",
+    "Current-snapshot records cannot reconstruct every historical administrative revision."
+  ]
+}

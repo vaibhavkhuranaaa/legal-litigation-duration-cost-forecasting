@@ -1,0 +1,41 @@
+version = 4
+capability_id = "portfolio_12m_resolution"
+prediction_unit = "aggregate filing cohort"
+target = "share of filed cases reaching FJC statistical termination within 365 days"
+source_relation = "analytics.mart_comparable_cases"
+snapshot_cutoff = "2026-03-31"
+horizon_days = 365
+training_lookback_years = 3
+bootstrap_replicates = 400
+random_seed = 20260824
+final_holdout_start = "2024-04-01"
+final_holdout_end = "2024-06-30"
+final_holdout_read = false
+expected_digest = "bd4c45b0dfb9b5e32280148fc032730d469052e35c3bd6eec381cb9fece66965"
+
+[gates]
+overall_calibration_upper = 0.05
+monthly_calibration_error = 0.05
+estimate_coverage = 0.80
+minimum_monthly_cases = 200
+minimum_development_folds = 4
+
+[[folds]]
+fold_id = "fold_2020"
+assessment_start = "2020-04-01"
+assessment_end = "2021-03-31"
+
+[[folds]]
+fold_id = "fold_2021"
+assessment_start = "2021-04-01"
+assessment_end = "2022-03-31"
+
+[[folds]]
+fold_id = "fold_2022"
+assessment_start = "2022-04-01"
+assessment_end = "2023-03-31"
+
+[[folds]]
+fold_id = "fold_2023"
+assessment_start = "2023-04-01"
+assessment_end = "2024-03-31"

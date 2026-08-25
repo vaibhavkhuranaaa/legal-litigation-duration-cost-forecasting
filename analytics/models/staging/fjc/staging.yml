@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: stg_fjc_civil_records
+    description: Typed FJC statistical records with actual dates, AO-use dates, raw codes, and source provenance kept separate.
+    columns:
+      - name: source_row_number
+        tests: [not_null]
+      - name: source_digest
+        tests: [not_null]
+      - name: filed_date
+        tests: [not_null]
+      - name: status_code
+        tests:
+          - not_null
+          - accepted_values:
+              values: [L, S]
+      - name: nature_of_suit_raw
+        tests: [not_null]

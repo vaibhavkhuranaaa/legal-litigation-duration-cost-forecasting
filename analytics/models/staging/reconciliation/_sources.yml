@@ -1,0 +1,51 @@
+version: 2
+
+sources:
+  - name: reconciliation_inputs
+    description: Private, immutable source-reconciliation extracts. These are local evidence inputs, not public datasets.
+    schema: "{{ env_var('BIGQUERY_RECONCILIATION_DATASET', 'federal_civil_case_planner') }}"
+    tables:
+      - name: recap_dockets
+        identifier: raw_recap_dockets_v1
+        description: Bounded CourtListener docket metadata retained for exact candidate generation.
+        config:
+          external_location: "read_parquet('{{ env_var('RECAP_DOCKETS_GLOB', '/private/reconciliation/recap/filing_year=*/*.parquet') }}', hive_partitioning=false)"
+        columns:
+          - {name: recap_docket_id, tests: [not_null]}
+          - {name: court_id, tests: [not_null]}
+          - {name: office_code, tests: [not_null]}
+          - {name: docket_number_core, tests: [not_null]}
+          - {name: filed_date, tests: [not_null]}
+          - {name: source_digest, tests: [not_null]}
+      - name: district_mapping
+        identifier: reconciliation_district_mapping_v1
+        description: Versioned FJC district, CourtListener court, and AO district mapping.
+        config:
+          external_location: "read_parquet('{{ env_var('DISTRICT_MAPPING_PATH', '/private/reconciliation/district_mapping.parquet') }}')"
+        columns:
+          - {name: district_code, tests: [not_null, unique]}
+          - {name: court_id, tests: [not_null, unique]}
+          - {name: ao_label, tests: [not_null, unique]}
+      - name: ao_table_c
+        identifier: raw_ao_table_c_v1
+        description: Typed AO Table C district and national counts for the aligned reporting period.
+        config:
+          external_location: "read_parquet('{{ env_var('AO_TABLE_C_PATH', '/private/reconciliation/ao_table_c.parquet') }}')"
+        columns:
+          - {name: district_code, tests: [not_null, unique]}
+      - name: fjc_ao_population
+        identifier: reconciliation_fjc_ao_population_v1
+        description: Complete-snapshot FJC aggregates built with AO-used dates and pending-stock semantics.
+        config:
+          external_location: "read_parquet('{{ env_var('FJC_AO_POPULATION_PATH', '/private/reconciliation/fjc_ao_population.parquet') }}')"
+        columns:
+          - {name: district_code, tests: [not_null, unique]}
+      - name: promoted_matches
+        identifier: promoted_fjc_recap_matches_v1
+        description: Private one-to-one FJC and RECAP matches promoted only after the governed review gate passed.
+        config:
+          external_location: "read_parquet('{{ env_var('PROMOTED_MATCHES_PATH', '/private/reconciliation/promoted/fjc_recap_matches.parquet') }}')"
+        columns:
+          - {name: case_identifier, tests: [not_null, unique]}
+          - {name: source_record_identifier, tests: [not_null, unique]}
+          - {name: recap_docket_id, tests: [not_null, unique]}

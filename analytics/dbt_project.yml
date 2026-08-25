@@ -1,0 +1,22 @@
+name: federal_civil_litigation
+version: 1.0.0
+config-version: 2
+profile: federal_civil_litigation
+model-paths: ["models"]
+test-paths: ["tests"]
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  nature_of_suit_rule_version: "2023-codebook-v1"
+  ao_total_relative_difference_threshold: 0.005
+  ao_district_relative_difference_threshold: 0.02
+
+models:
+  federal_civil_litigation:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: view
+      +access: public

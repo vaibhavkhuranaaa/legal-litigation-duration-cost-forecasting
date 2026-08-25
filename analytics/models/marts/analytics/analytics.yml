@@ -1,0 +1,120 @@
+version: 2
+
+models:
+  - name: mart_portfolio_summary
+    description: Portfolio counts by district and canonical nature family. Grain is one district and nature-family pair.
+    config: {contract: {enforced: true}}
+    columns:
+      - {name: district_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: nature_family, data_type: string, constraints: [{type: not_null}]}
+      - {name: total_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: collision_free_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: pending_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: terminated_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: matched_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: supported_nature_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: match_coverage, data_type: double, constraints: [{type: not_null}]}
+      - {name: pending_share, data_type: double, constraints: [{type: not_null}]}
+      - {name: as_of_date, data_type: date, constraints: [{type: not_null}]}
+
+  - name: mart_filing_cohorts
+    description: Filing-cohort support and outcome counts by filing year, district, and canonical nature family.
+    config: {contract: {enforced: true}}
+    columns:
+      - {name: filing_year, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: district_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: nature_family, data_type: string, constraints: [{type: not_null}]}
+      - {name: cohort_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: observed_terminations, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: pending_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: matched_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: followup_days, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: as_of_date, data_type: date, constraints: [{type: not_null}]}
+
+  - name: mart_pending_inventory
+    description: Right-censored pending inventory by district, nature family, and explicit age band.
+    config: {contract: {enforced: true}}
+    columns:
+      - {name: district_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: nature_family, data_type: string, constraints: [{type: not_null}]}
+      - {name: age_band, data_type: string, constraints: [{type: not_null}], tests: [{accepted_values: {values: [under_1_year, 1_to_2_years, 2_to_5_years, 5_years_or_more]}}]}
+      - {name: pending_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: matched_pending_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: average_age_days, data_type: double, constraints: [{type: not_null}]}
+      - {name: as_of_date, data_type: date, constraints: [{type: not_null}]}
+
+  - name: mart_duration_summary
+    description: Follow-up and observed-duration summaries by intake-known grouping. Observed-duration averages are descriptive and are not censoring-aware estimates.
+    config: {contract: {enforced: true}}
+    columns:
+      - {name: district_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: nature_family, data_type: string, constraints: [{type: not_null}]}
+      - {name: jurisdiction_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: origin_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: intake_procedural_cohort, data_type: string, constraints: [{type: not_null}]}
+      - {name: support_count, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: observed_terminations, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: censored_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: average_followup_days, data_type: double, constraints: [{type: not_null}]}
+      - {name: average_observed_duration_days, data_type: double}
+      - {name: as_of_date, data_type: date, constraints: [{type: not_null}]}
+
+  - name: mart_comparable_cases
+    description: Collision-free record-level comparable-case input with intake-known grouping, censoring semantics, match availability, and group support.
+    config: {contract: {enforced: true}}
+    columns:
+      - {name: case_identifier, data_type: string, constraints: [{type: not_null}], tests: [unique]}
+      - {name: source_record_identifier, data_type: string, constraints: [{type: not_null}], tests: [unique]}
+      - {name: district_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: filed_date, data_type: date, constraints: [{type: not_null}]}
+      - {name: terminated_date, data_type: date}
+      - {name: analysis_end_date, data_type: date, constraints: [{type: not_null}]}
+      - {name: duration_days, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: event_observed, data_type: boolean, constraints: [{type: not_null}]}
+      - {name: nature_family, data_type: string, constraints: [{type: not_null}]}
+      - {name: jurisdiction_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: origin_code, data_type: string, constraints: [{type: not_null}]}
+      - {name: intake_procedural_cohort, data_type: string, constraints: [{type: not_null}]}
+      - {name: filing_title_code, data_type: string}
+      - {name: filing_section_code, data_type: string}
+      - {name: filing_subsection_code, data_type: string}
+      - {name: snapshot_jury_demand_code, data_type: string}
+      - {name: snapshot_mdl_docket_code, data_type: string}
+      - {name: outcome_definition, data_type: string, constraints: [{type: not_null}], tests: [{accepted_values: {values: [fjc_statistical_termination]}}]}
+      - {name: has_recap_match, data_type: boolean, constraints: [{type: not_null}]}
+      - {name: comparable_group_support_count, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: as_of_date, data_type: date, constraints: [{type: not_null}]}
+
+  - name: mart_data_coverage
+    description: Coverage by overall population, district, filing year, and canonical nature family.
+    config: {contract: {enforced: true}}
+    columns:
+      - {name: dimension_type, data_type: string, constraints: [{type: not_null}], tests: [{accepted_values: {values: [overall, district, filing_year, nature_family, procedural_cohort]}}]}
+      - {name: dimension_value, data_type: string, constraints: [{type: not_null}]}
+      - {name: total_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: collision_free_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: supported_nature_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: matched_records, data_type: bigint, constraints: [{type: not_null}]}
+      - {name: match_coverage, data_type: double, constraints: [{type: not_null}]}
+
+exposures:
+  - name: portfolio_operations
+    type: dashboard
+    maturity: medium
+    description: Governed inputs for portfolio volume, pending inventory, duration, cohort, and coverage decisions.
+    depends_on:
+      - ref('mart_portfolio_summary')
+      - ref('mart_filing_cohorts')
+      - ref('mart_pending_inventory')
+      - ref('mart_duration_summary')
+      - ref('mart_data_coverage')
+    owner: {name: Legal Operations Analytics, email: analytics@example.invalid}
+  - name: matter_planning_features
+    type: ml
+    maturity: low
+    description: Collision-free intake-known feature boundary for M7 baseline and challenger evaluation.
+    depends_on:
+      - ref('mart_comparable_cases')
+      - ref('mart_duration_summary')
+      - ref('mart_data_coverage')
+    owner: {name: Data Science, email: analytics@example.invalid}
