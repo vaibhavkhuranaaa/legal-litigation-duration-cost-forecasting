@@ -13,15 +13,15 @@ M6 exposes six governed analytics products from the complete FJC statistical-rec
 
 All aggregate marts reconcile to the 5,008,334-record statistical population. Comparable cases reconcile to the 4,645,719 collision-free case mart. Pending inventory preserves all 457,327 right-censored records. RECAP matches contribute only availability and provenance; FJC remains the duration source. The procedural cohort is diagnostic and does not remove MDL or other difficult matters. M7 evaluated Kaplan-Meier and XGBoost AFT, preserved their failed calibration gates, and keeps duration estimates disabled.
 
-## Planned serving products
+## Serving products
 
-M16 adds a narrow denormalized serving mart at one governed statistical record. It is a publication
+M16 built a narrow denormalized serving mart at one governed statistical record. It is a publication
 product, not a replacement for the normalized private warehouse or the collision-free comparable-case
 mart. All 5,008,334 snapshot records, including 362,615 collision records, remain present with explicit
 identity quality. Only M15-approved analytical fields enter versioned annual Parquet partitions.
 
-M18 adds a semantic metric registry over the aggregate cube and row mart. It defines measures,
+M18 adds the `metrics.v1` semantic registry over the aggregate cube and row mart. It defines measures,
 compatible dimensions, formulas, formatting, support rules, provenance, and limitations once. Query
 templates, labels, charts, exports, documentation, and reconciliation tests consume that registry.
-The serving mart and semantic layer must reproduce the approved aggregate counts exactly before they
-can become public assets.
+The private serving mart and semantic layer reproduce all 8,970 supported aggregate slices exactly.
+Neither is approved as a public asset before later interface, reliability, and release gates pass.

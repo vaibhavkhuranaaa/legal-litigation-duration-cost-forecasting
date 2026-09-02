@@ -27,23 +27,24 @@ requires `sqlparse <0.6`, so no compatible patched release exists. The accepted 
 repository-controlled SQL during local/CI analytics builds, and is re-audited when dbt changes its
 constraint. Untrusted SQL must never enter that toolchain.
 
-## Planned row-level release
+## Governed row-level release
 
-The planned M15 publication contract may permit only identifier-minimized statistical records in
+The M15 publication contract permits only identifier-minimized statistical records in
 generated data assets outside tracked Git. Public availability of the source does not authorize unrestricted
 republishing. Direct and natural identifiers, names, text, review evidence, source paths, credentials,
 and model artifacts remain prohibited. Opaque keys must be random or privately keyed and scoped to a
-dataset version. Exact date and office fields require an explicit M15 linkability decision.
+dataset version. Exact dates and office fields are excluded by the frozen linkability decision.
 
 M17 validates the browser query engine against a local range-capable origin and uses read-only public
 files to probe candidate-host HTTPS, CORS, redirects, range, cache, and content-type behavior. M22
-verifies the exact Parquet URLs only after candidate deployment receives fresh approval. The manifest
-allowlists every partition and compatible schema version.
+verified those controls against every object at the approved production Worker; the manifest allowlists
+every partition and compatible schema version. The upload-only route was removed after staging.
 The application does not accept arbitrary remote paths or raw SQL. DuckDB-WASM runs in a Web Worker
 with query cancellation, memory and result ceilings, projected columns, bounded paging, and typed
 failure. Normal interactions cannot request all partitions implicitly.
 
 CSV exports retain spreadsheet-formula neutralization and explicit row bounds. An unavailable or
 unverified filtered-Parquet export is refused. The full immutable dataset download remains a separate,
-explicit user action and is never an automatic fallback. M21 requires a
-fresh security and privacy review because the current review covers only the aggregate release.
+explicit user action and is never an automatic fallback. M21 completed the physical security and
+privacy review. M22 local preflight repeated row-value and packaged-text scans with zero findings;
+live-origin checks pass for the exact production inventory. The Pages bundle pins the approved origin.

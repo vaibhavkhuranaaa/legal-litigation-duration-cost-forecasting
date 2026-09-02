@@ -2,10 +2,9 @@
 
 ## Status and outcome
 
-This is the approved implementation plan for the next release. It is not a claim about the current
-live product. The v1.1 dashboard remains a full-population aggregate explorer. The next release will
-add governed analytical access to all 5,008,334 statistical records and a Power BI-style report
-workspace while preserving the zero-dollar operating ceiling.
+This plan records the implemented v2.0 release. The dashboard provides governed analytical access to
+all 5,008,334 statistical records and a Power BI-style report workspace while preserving the
+zero-dollar operating ceiling and its aggregate fast path.
 
 The target outcome is a portfolio analyst who can move from an executive measure to a chart, a
 district or case-family slice, and finally the supporting analytical records without leaving one
@@ -15,15 +14,14 @@ disabled, and synthetic scenarios remain explicitly separate from observed data.
 ## Publication contract
 
 "Full row-level" means the complete statistical-record population with a narrow, approved analytical
-schema. It does not mean an unrestricted copy of the source archive. The fields below are candidates;
-M15 decides their final inclusion, exactness, and coarsening.
+schema. It does not mean an unrestricted copy of the source archive. M15 freezes the fields below.
 
-The candidate public serving mart includes:
+The M15-approved public serving mart includes:
 
-- an opaque row key produced by a deterministic privately keyed pseudonym or a persisted release-scoped
-  random mapping so approved replays preserve keys and bytes;
-- circuit, district, and office codes;
-- filing, termination, censoring, and source-snapshot dates;
+- an opaque row key produced by release-scoped HMAC-SHA-256 so approved replays preserve keys and
+  bytes without publishing the private source identity or key material;
+- circuit and district codes, with office code excluded;
+- month-precision filing and termination dates plus the source-snapshot date;
 - pending status, event-observation status, and descriptive duration;
 - nature-of-suit code, family, and mapping status;
 - jurisdiction, origin, and governed procedural cohort;
@@ -38,9 +36,10 @@ records and are visibly labeled. They are never represented as canonical case id
 
 ## Target architecture
 
-The baseline design is a zero-cost static lakehouse. GitHub Pages continues to serve the application
-shell and existing aggregate cube. Its suitability for the versioned manifest and compact Zstandard
-Parquet partitions remains provisional until M17 and the approved M22 live candidate verify it.
+The implemented design is a zero-cost static lakehouse. GitHub Pages serves the application shell and
+existing aggregate cube. M17 selected the browser architecture after local range validation and
+read-only probes of existing public assets. M22 verified the exact Parquet behavior at an approved
+Cloudflare candidate before the immutable prefix and read-only Worker were activated for production.
 DuckDB-WASM runs in a
 Web Worker, reads only required Parquet row groups, and returns Arrow batches to the React interface.
 ECharts renders visual results, and a virtualized table renders record results without placing all
@@ -81,6 +80,8 @@ and [GitHub large-file guidance](https://docs.github.com/en/repositories/working
 DuckDB-WASM is the baseline query engine because it can query Parquet directly in the browser. Its
 WebAssembly memory ceiling and default single-threaded execution make memory, cancellation, and
 mobile testing release gates. See the [DuckDB-WASM overview](https://duckdb.org/docs/stable/clients/wasm/overview).
+M17 pins version 1.29.0 and disables full HTTP fallback because version 1.32.0 failed the representative
+HTTP path and has an open upstream range regression. Any upgrade must replay the M17 corpus.
 Cloudflare R2 is an overflow option only. Its free allowance is useful, but adopting it adds an
 external service and operational surface. See [R2 pricing](https://developers.cloudflare.com/r2/pricing/).
 
@@ -94,8 +95,8 @@ deployment copy is generated with the application and data manifest.
 
 The private warehouse remains normalized and audit-oriented. The public serving mart is deliberately
 narrow and denormalized for browser scans. The mart is sorted by filing year, district, nature family,
-and opaque row key, then partitioned by filing year. M17 benchmarks a matrix of row-group and file-size
-policies and records the selected policy with its limitations.
+and opaque row key, then partitioned by filing year. M17 selected a 65,536-row group for the
+representative complete-year slice and recorded its limitations.
 
 ## Report experience
 
@@ -122,8 +123,9 @@ The planned report pages are:
 The record explorer will never render an unbounded result. It starts with projected columns, applies a
 deterministic default sort, pages or streams bounded Arrow batches, displays total and returned counts,
 and requires an explicit export action. CSV export is bounded and spreadsheet-safe. Filtered Parquet
-is preferred for large analytical exports. A separate full-dataset download exposes the exact released
-partitions and manifest.
+is preferred for large analytical exports. Each successful bounded export prepares a deterministic
+JSON provenance sidecar with its scope and contract versions. A separate full-dataset download exposes
+the exact released partitions and manifest.
 
 ## Milestone plan
 
@@ -138,10 +140,24 @@ partitions and manifest.
 | M21 | M16, M19, M20 | Reliability, performance, and accessibility | Query budgets, cancellation and recovery, cache behavior, mobile memory, browser compatibility, security boundary, keyboard operation, WCAG 2.2 AA checks, and projected zero-cost envelope pass. |
 | M22 | M21 | Row-level release | Fresh approval before candidate deployment, deterministic rebuild, public-boundary scan, exact reconciliation, production build, generated static assets, live smoke test, rollback rehearsal, actual cost verification, documentation, and final publication decision pass. |
 
-M15 is the first milestone. After M15, M17 is the next unblocked milestone. M16 must not scale the full build until the M17 vertical slice demonstrates
-that the intended browser architecture is operationally safe. M18 can proceed against the same slice
-after M15 freezes the publication contract. M19 and M20 consume the frozen semantic and data contracts.
-M22 requires M15 through M21.
+M15 through M21 are complete locally. M16 produced two byte-identical private candidates with
+5,008,334 rows, 362,615 collision labels, 457,327 pending records, 17 annual partitions, exact
+aggregate reconciliation, and 104,725,737 total bytes. M18 registers 11 measures and 17 dimensions,
+maps every aggregate measure field, and reconciles 8,970 supported slices exactly. M19 adds eight
+responsive destinations, one synchronized aggregate report context, URL round-trips, bookmarks, and
+explicit recovery states. M20 adds one-partition bounded queries, deterministic page boundaries,
+projected and virtualized rows, key detail, formula-safe CSV, verified filtered Parquet, and the
+explicit complete-data path. M21 adds fail-closed manifest and origin validation, bounded worker
+recovery, exact-origin range service, aggregate rollback, responsive and accessibility hardening, and
+complete private candidate scans. Its browser corpus recovers after every cancellation with zero memory
+failures or unintended full fetches; the combined Pages application and data candidate is 185,528,442 bytes
+and recurring infrastructure cost remains $0.
+
+M22 completed verification and production reconciliation. The exact 38-file,
+185,759,334-byte inventory matches the privately recorded frozen digest; all live files match the frozen
+manifest, the representative browser query p95 is 2,256 ms, provider rollback and restoration pass,
+and reconciled incremental cost is $0 under the measured free-tier usage. All 33 frozen checks pass.
+The aggregate cube remains active as the initial-render fast path and safe fallback.
 
 ## Release gates
 
@@ -160,9 +176,13 @@ M22 requires M15 through M21.
 | Cost | Recurring infrastructure cost remains $0 under the declared usage profile. |
 | Portability | Changing `DATA_BASE_URL` switches the data origin without changing report semantics. |
 
-M17 must replace provisional performance targets with a pinned reference device, browser versions,
-query corpus, network profile, measured results, and limitations before M21 can close. Exact public
-Parquet URL behavior remains an M22 live-candidate gate after deployment receives fresh approval.
+M17 used Chrome 151 on a 1440 by 900 desktop viewport and a 390 by 844 mobile viewport, on the same
+10-logical-core host with unthrottled loopback networking. The measure, grouped chart, 100-row page,
+and 200-row sort corpus recorded a worst cold p95 of 27.7 ms and warm p95 of 10.6 ms. The maximum
+observed JavaScript heap was 17,197,661 bytes with zero memory failures. Both profiles transferred
+6,196,296 bytes across the complete run, used only HTTP 206 data responses, and produced zero
+unintended full fetches. The aggregate production shell LCP was 120 ms. The production row origin
+passes exact Parquet HTTPS, MIME, CORS, byte-range, immutable-cache, and zero-redirect checks.
 
 ## Reliability, security, and rollback
 
@@ -177,20 +197,15 @@ Parquet URL behavior remains an M22 live-candidate gate after deployment receive
 - A service worker may cache the shell, manifest, registry, and aggregate cube. Row partitions use
   versioned immutable paths and browser HTTP caching rather than unbounded offline prefetch.
 - Rollback republishes the last verified application and data manifest together. A partial data publish
-  must never become the active manifest.
-- After fresh M22 deployment approval, the private build packages application, compiled registry,
-  manifest, and partitions into an immutable candidate deployment or approved object-store prefix.
-  Live checks run against that inactive candidate. Only a passing candidate manifest becomes active;
-  failure restores the prior manifest and aggregate application.
+  must never become the active manifest. Activation and restoration use a cache-busting shell request
+  so stale HTML cannot reference a superseded hashed bundle.
+- The approved M22 deployment packages the compiled registry, manifest, and partitions under one
+  immutable R2 prefix served by a read-only Worker. Failed row activation leaves the aggregate
+  application active.
 
-## First implementation slice
+## Release decision
 
-The next implementation session should complete M15 and the smallest useful part of M17:
-
-1. freeze `public-row-mart.v1` and the prohibited-field policy;
-2. build one representative annual partition from the private statistical-record mart;
-3. load that partition through DuckDB-WASM in a Web Worker;
-4. run a small query corpus covering a measure, grouped chart result, row page, sort, and cancellation;
-5. record transfer bytes, cold and warm latency, peak memory, desktop and mobile behavior;
-6. decide partition size, row-group size, caching policy, and a provisional data-origin policy; and
-7. stop before a full data build, upload, deployment, or publication unless its gate is explicitly approved.
+M22 verification is complete and the final publication decision is PASS. The exact verified inventory
+is active through the production row-data Worker, GitHub Pages points to that origin, and release v2.0
+supersedes the earlier HOLD decisions. The aggregate path remains available for initial rendering and
+fail-closed recovery.

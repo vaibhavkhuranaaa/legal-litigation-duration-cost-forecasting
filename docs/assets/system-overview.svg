@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-labelledby="title description">
+  <title id="title">Federal civil portfolio intelligence system overview</title>
+  <desc id="description">Private governed records flow through reproducible builds into an aggregate public dashboard and a read-only row analytics release.</desc>
+  <rect width="1200" height="420" rx="24" fill="#f4f1ea"/>
+  <g font-family="Arial, sans-serif" fill="#16221c">
+    <text x="60" y="70" font-size="28" font-weight="700">Governed analytics delivery</text>
+    <text x="60" y="103" font-size="17" fill="#536159">Private records stay private; only approved analytical products cross the boundary.</text>
+  </g>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <rect x="60" y="160" width="220" height="140" rx="16" fill="#173c32"/>
+    <text x="170" y="218" fill="#ffffff" font-size="21" font-weight="700">Private warehouse</text>
+    <text x="170" y="252" fill="#d8e7df" font-size="15">5,008,334 governed records</text>
+    <text x="170" y="278" fill="#d8e7df" font-size="15">censoring and provenance</text>
+
+    <rect x="370" y="160" width="220" height="140" rx="16" fill="#d9a441"/>
+    <text x="480" y="218" fill="#1f211c" font-size="21" font-weight="700">Reproducible builds</text>
+    <text x="480" y="252" fill="#3b392e" font-size="15">contracts and tests</text>
+    <text x="480" y="278" fill="#3b392e" font-size="15">allowlists and reconciliation</text>
+
+    <rect x="680" y="130" width="220" height="110" rx="16" fill="#ffffff" stroke="#83968c" stroke-width="3"/>
+    <text x="790" y="180" fill="#16221c" font-size="20" font-weight="700">Aggregate dashboard</text>
+    <text x="790" y="210" fill="#536159" font-size="15">active public product</text>
+
+    <rect x="680" y="260" width="220" height="110" rx="16" fill="#ffffff" stroke="#d9a441" stroke-width="3"/>
+    <text x="790" y="310" fill="#16221c" font-size="20" font-weight="700">Row analytics</text>
+    <text x="790" y="340" fill="#775d24" font-size="15">verified, read-only, active</text>
+
+    <rect x="990" y="160" width="150" height="140" rx="16" fill="#dce6e0"/>
+    <text x="1065" y="218" fill="#16221c" font-size="20" font-weight="700">Browser</text>
+    <text x="1065" y="250" fill="#536159" font-size="15">bounded queries</text>
+    <text x="1065" y="276" fill="#536159" font-size="15">approved fields</text>
+  </g>
+  <g stroke="#64776d" stroke-width="4" fill="none" marker-end="url(#arrow)">
+    <path d="M280 230h78"/>
+    <path d="M590 210h78"/>
+    <path d="M590 250h78"/>
+    <path d="M900 210h78"/>
+    <path d="M900 315h45c20 0 33-18 33-40"/>
+  </g>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0l10 5-10 5z" fill="#64776d"/>
+    </marker>
+  </defs>
+</svg>

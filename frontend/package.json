@@ -1,18 +1,23 @@
 {
   "name": "federal-civil-portfolio-intelligence-web",
   "private": true,
-  "version": "1.1.0",
+  "version": "2.0.0",
   "type": "module",
   "engines": {
     "node": ">=22 <23"
   },
   "scripts": {
     "build": "tsc -b && vite build",
+    "build:m17": "tsc -b && vite build --mode m17",
     "build:pages": "tsc -b && vite build --mode pages",
     "dev": "vite",
+    "test:m19": "node --test --experimental-strip-types tests/report-state.test.ts",
+    "test:m20": "node --test --experimental-strip-types tests/report-state.test.ts tests/record-explorer.test.ts",
+    "test:m21": "node --test --experimental-strip-types tests/report-state.test.ts tests/record-explorer.test.ts tests/row-origin-contract.test.ts",
     "typecheck": "tsc -b"
   },
   "dependencies": {
+    "@duckdb/duckdb-wasm": "1.29.0",
     "@fontsource/ibm-plex-sans": "5.3.0",
     "echarts": "^6.0.0",
     "react": "^19.1.1",

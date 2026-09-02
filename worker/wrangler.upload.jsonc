@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "legal-litigation-row-candidate",
+  "main": "src/upload.ts",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": {
+    "RELEASE_PREFIX": "releases/m22-5ce9def346a77818183c2a9428ca8ba0d439687ceef476a539b5cf13d1b554d1"
+  },
+  "r2_buckets": [
+    {
+      "binding": "DATA",
+      "bucket_name": "legal-litigation-row-releases"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true
+    }
+  }
+}

@@ -4,18 +4,32 @@
 
 [Open the full-population analytics dashboard](https://vaibhavkhuranaaa.github.io/legal-litigation-duration-cost-forecasting/). It runs entirely in the browser from a thresholded analytical cube built from all 5,008,334 governed records; no case-level data or duration model is shipped.
 
-## Next release plan
+## Verified results
 
-The next release will extend this aggregate fast path with an identifier-minimized analytical mart
+| Gate | Baseline | Verified result |
+| --- | ---: | ---: |
+| M22 integrated checks | 25 of 33 local-only | 33 of 33 |
+| Live filtered-query p95 | 5,000 ms | 2,256 ms |
+| Published artifact | 262,144,001-byte failing control | 185,759,334 bytes |
+| Incremental provider cost | $0.01 paid-cost control | $0 |
+
+![System overview](docs/assets/system-overview.svg)
+
+## Row analytics release
+
+Release v2.0 extends the aggregate fast path with an identifier-minimized analytical mart
 containing the complete 5,008,334-record snapshot, queried in the browser through DuckDB-WASM and
 presented as an eight-page, Power BI-style report workspace. The mart will preserve collision records
 and expose only approved analytical fields. Docket identifiers, names, text, private review evidence,
 and model artifacts remain excluded.
 
-This capability is planned, not live. The milestone sequence, publication contract, architecture,
-performance targets, cost boundary, and exact first implementation slice are in the
-[row-level analytics release plan](docs/row-level-analytics-plan.md). Generated data will remain out
-of tracked Git and cannot be published until the new release gates pass.
+M15 through M22 are complete, including the eight-page report workspace, bounded Record Explorer,
+browser hardening, exact live-object reconciliation, browser smoke tests, and provider rollback.
+GitHub Pages serves the application and the read-only production Worker serves the immutable row
+release from R2. The milestone sequence, publication contract, architecture, performance targets,
+cost boundary, and verification record are in the
+[row-level analytics release plan](docs/row-level-analytics-plan.md). Generated data remains out of
+tracked Git.
 
 Ready portfolio product for nationwide federal civil operations analytics and synthetic planning. It
 includes verified acquisition, a replayable raw platform, a tested dbt warehouse, governed marts,
@@ -63,15 +77,15 @@ Source reconciliation verified 100 percent reviewed precision across 800 blinded
 - No FJC and RECAP match is assumed.
 - No judge, party, attorney, document-text, legal-outcome, or legal-advice feature is included.
 - Existing GCP resources and local Terraform state require reconciliation before any future cloud action.
-- The release supports a static public dashboard and an offline container; a live production data service and autoscaling are outside its verified scope.
+- The release supports a static public dashboard, a read-only row-data origin, and an offline container; autoscaling beyond the declared zero-cost usage profile is outside its verified scope.
 
 ## Scaling
 
 The seeded demo runs offline from a deidentified SQLite extract and a 1.8 MB aggregate cube derived
 from the complete governed population, without BigQuery credentials or live warehouse queries.
-The planned static-lakehouse extension retains the aggregate cube for initial rendering and adds
-partitioned Parquet only after browser and hosting benchmarks pass. It remains outside the current
-release until M22.
+The static-lakehouse release retains the aggregate cube for initial rendering and reads approved
+annual Parquet partitions through the production row-data origin. M22 verified the complete immutable
+inventory before activation and the published application preserves the same fail-closed contracts.
 
 ## Current checks
 
@@ -103,3 +117,10 @@ responsive interface passed zero-violation accessibility checks; reliability and
 are tested; the analytics application runs as an unprivileged, network-independent container; and the
 integrated release gate passes. See [offline demo](docs/demo.md), [model card](docs/model-card.md),
 [data quality](docs/data-quality.md), and [security review](docs/security-review.md).
+
+M15 through M22 are complete for the governed row-level release. The exact 38-file,
+185,759,334-byte production inventory is served through a read-only Cloudflare Worker and reconciles
+to the privately recorded frozen digest. All 33 frozen M22 checks pass,
+including live range, MIME, CORS, cache, hash, browser-latency, mobile, cost, and provider-rollback
+checks. GitHub Pages activates the row workspace while retaining the aggregate cube as its fast path
+and safe fallback.

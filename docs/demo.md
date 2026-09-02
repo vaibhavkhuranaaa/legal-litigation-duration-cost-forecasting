@@ -13,13 +13,13 @@ at `http://127.0.0.1:8080`; no network connection is needed after the image is b
 The demonstration is an operations aid, not legal advice. Historical aggregates are descriptive,
 and staffing/budget outputs are deterministic synthetic sensitivities based only on user inputs.
 
-The [public portfolio intelligence dashboard](https://vaibhavkhuranaaa.github.io/legal-litigation-duration-cost-forecasting/) uses the same approved cube and deterministic scenario equations. It contains no API credential, case-level row, model artifact, or live data connection.
+The [public portfolio intelligence dashboard](https://vaibhavkhuranaaa.github.io/legal-litigation-duration-cost-forecasting/) uses the same approved cube and deterministic scenario equations, plus the governed row-data origin for bounded record exploration. It contains no API credential, source identifier, model artifact, or private-warehouse connection.
 
-## Planned row-level distribution
+## Row-level distribution
 
-The next public mode keeps the aggregate cube for initial rendering and rollback, then queries an
+The public mode keeps the aggregate cube for initial rendering and rollback, then queries an
 immutable, identifier-minimized Parquet data pack through DuckDB-WASM. The data pack is generated for
-the Pages deployment artifact or another M17-approved static origin and remains outside tracked Git.
+the approved production row-data origin and remains outside tracked Git.
 Application, manifest, semantic registry, and partitions share compatible version identifiers.
 
 The offline container remains aggregate-only unless a separately downloaded, compatible data pack is

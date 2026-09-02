@@ -4,6 +4,8 @@ __pycache__/
 frontend/node_modules/
 frontend/dist/
 frontend/*.tsbuildinfo
+worker/node_modules/
+worker/.wrangler/
 .env
 .DS_Store
 data/raw/

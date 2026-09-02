@@ -17,10 +17,11 @@ Southern District of Texas termination diagnostic remains outside the district t
 duration summaries exclude censored cases and are descriptive only. The shipped SQLite seed has
 only aggregate rows and contains no matter identifiers.
 
-## Planned publication checks
+## Row-mart publication checks
 
-The current evidence above covers the aggregate release. M16 through M22 must separately verify the
-row-level serving mart before publication:
+M16 verifies the local row-level serving mart, M18 freezes the semantic layer, and M19 through M20
+verify the synchronized interface and bounded record explorer. M21 completes the local reliability
+gates. M22 repeats the candidate checks below and verifies them at the production public origin:
 
 - exact reconciliation to 5,008,334 statistical records for the declared snapshot;
 - zero prohibited fields and zero direct or natural identifiers;
@@ -31,4 +32,9 @@ row-level serving mart before publication:
 - exact pending, censoring, mapping, and source-record-count semantics; and
 - export and full-download metadata that identify the same immutable dataset version.
 
-No result is claimed for these checks until the corresponding milestone evidence is recorded.
+M16 records exact population, collision, pending, aggregate, manifest, size, and replay results. M20
+reconciles the frozen browser result and bounded exports, including deterministic provenance metadata.
+M22 verifies an exact 38-file, 185,759,334-byte inventory against the privately retained digest. Every
+live object matches the manifest, and range, MIME, CORS, cache, redirect, browser, cost, and
+provider-rollback gates pass. The generated inventory remains outside Git and is active through the
+read-only production Worker.

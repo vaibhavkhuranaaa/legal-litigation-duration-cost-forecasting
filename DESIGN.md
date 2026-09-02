@@ -245,8 +245,9 @@ Tables are compact, numerical, and horizontally scrollable. Headers use uppercas
 The planned Record Explorer virtualizes rows, keeps a deterministic default sort, and supports a
 column picker, resizing, pinning, and a detail drawer. Pinned columns use structural borders, not
 shadows. Query progress, cancel, memory refusal, unavailable partition, and retry states stay inside
-the affected analytical surface. Export controls always state format, scope, and row bound before the
-action begins.
+the affected analytical surface. A cancelled or timed-out browser query preserves the analytical
+scope, replaces its worker, and announces recovery in that same surface. Export controls always state
+format, scope, and row bound before the action begins.
 
 ### Bounded States
 

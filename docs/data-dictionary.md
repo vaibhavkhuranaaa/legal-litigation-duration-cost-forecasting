@@ -26,20 +26,19 @@
 | `source_record_count` | integer | Number of records sharing the natural identifier | Required and positive |
 | `source_snapshot_cutoff` | date | Observation cutoff of the source snapshot | Required for censoring and provenance |
 
-## Planned published-mart dictionary
+## Frozen serving-mart dictionary
 
-This proposed dictionary becomes authoritative only after M15 approval. "Record" retains the FJC
-statistical-record grain and does not imply a unique legal case.
+This dictionary is authoritative for the locally built M16 mart and the M17 browser benchmark. The
+mart remains private and is not approved for publication. "Record" retains the FJC statistical-record
+grain and does not imply a unique legal case.
 
 | Field | Type | Publication meaning | Publication rule |
 | --- | --- | --- | --- |
-| `release_record_key` | string | Opaque row key within one dataset version | Random or privately keyed; never an unsalted source-key hash |
+| `release_record_key` | string | Opaque row key within one dataset version | HMAC-SHA-256, 128-bit output, private release secret |
 | `circuit_code` | string | Circuit grouping | Approved analytical code only |
 | `district_code` | string | District grouping | Approved analytical code only |
-| `office_code` | string | Office grouping | M15 linkability review required |
-| `filed_date` | date | Filing date | Exactness or coarsening decided by M15 |
-| `terminated_date` | date or null | Statistical termination date | Exactness or coarsening decided by M15; null when pending |
-| `censoring_date` | date | Observation cutoff for pending records | Must match null and event rules |
+| `filed_month` | date | Filing month | First-day encoding; not an exact event day |
+| `terminated_month` | date or null | Statistical termination month | First-day encoding; null when pending |
 | `pending_status` | boolean | Pending at source cutoff | True exactly when no termination is observed |
 | `event_observed` | boolean | Statistical termination observed | Never represented as legal outcome prediction |
 | `duration_days` | integer | Filing to termination or censoring | Descriptive only and nonnegative |
@@ -56,5 +55,6 @@ statistical-record grain and does not imply a unique legal case.
 | `dataset_version` | string | Immutable publication version | Required on every row or partition metadata |
 
 Prohibited public fields include `source_record_identifier`, `natural_case_identifier`,
-`case_identifier`, `source_row_number`, `docket_number`, PACER or RECAP identifiers, names, judges,
-parties, attorneys, documents, text, review labels, match evidence, credentials, and private paths.
+`case_identifier`, `source_row_number`, `office_code`, exact event and censoring dates,
+`docket_number`, PACER or RECAP identifiers, names, judges, parties, attorneys, documents, text,
+review labels, match evidence, credentials, private paths, and models.

@@ -22,21 +22,30 @@ The scenario lab remains a connected secondary workspace. Its low, base, and hig
 
 The product is an analytics and sensitivity instrument, not legal advice.
 
-## Planned report workspace
+## Local next-release report workspace
 
 M19 expands the current condensed dashboard without copying another product's visual trade dress.
 The established governed cockpit design remains, with eight report destinations: Executive Overview,
 Filing Trends, Pending Inventory and Aging, Case Mix, District Comparison, Record Explorer, Data
 Quality and Coverage, and Scenario Lab and Methods.
 
-District, circuit, filing period, termination period, pending status, nature family, jurisdiction,
-origin, and procedural cohort become synchronized slicers. Active-filter chips, selected chart marks,
-breadcrumbs, and shareable URL parameters display one report context. Chart selection cross-filters
-compatible visuals. Drill-through carries the full context to a detail page and provides an explicit
-return path.
+District and nature family are the synchronized aggregate-fast-path slicers. Historical cohort is a
+shared descriptive context. Active-filter chips, breadcrumbs, browser history, and canonical URL
+parameters display one report context. Ranking and composition selection cross-filter compatible
+views. Drill-through carries the full context to a detail page and provides an explicit return path.
+Browser-local bookmarks store only that relative URL and restore the same compatible state.
 
-The Record Explorer uses table virtualization, a deterministic sort, projected columns, pinning,
-resizing, a column picker, bounded Arrow result pages, and a record-detail drawer. It reports both the
-matching population and returned row count. CSV exports are bounded and formula-safe; larger filtered
-results use Parquet. Loading progress, cancellation, memory refusal, unavailable partitions, query
-errors, empty results, and aggregate fallback each have explicit recovery states.
+Loading, cancellation, request error, empty, support-withheld, and capability-refusal states have
+explicit recovery. M20 replaces the earlier Record Explorer refusal when a compatible row origin is
+configured. Users choose one filing-year partition, project approved columns, sort deterministically,
+pin and resize a column, page through 200-row Arrow results, and inspect all 19 approved fields for one
+opaque key. Native table windowing keeps no more than 19 data rows in the DOM during the verified
+scenario.
+
+CSV repeats the current partition, district, nature family, sort, and projection with a 50,000-row
+ceiling and spreadsheet-prefix neutralization. Filtered Parquet uses a 10,000-row ceiling and verifies
+its row count and schema before download. Each successful bounded export prepares a deterministic JSON
+provenance sidecar covering contract versions, attribution, filters, sort, projection, limit, format,
+and exported row count. Complete-data links remain separate, require explicit terms
+acknowledgement, and appear only with a configured row origin. Without that origin, Record Explorer
+fails closed and retains the aggregate context. The public v1.1 interface remains aggregate-only.
