@@ -22,7 +22,8 @@ M7 reads only the collision-free comparable-case mart. Its versioned contract fi
 
 The comparable-case mart identifies MDL, Social Security review, ordinary-original, and other procedural-origin cohorts without excluding records. Filing title and section codes remain research candidates. Current-snapshot jury-demand and MDL-docket fields are diagnostic only and are not protocol-v3 features. The target is FJC statistical termination, not settlement, merits resolution, fee, or client-work completion. See the [legal cohort contract](legal-cohort-contract.md).
 
-The local DuckDB build is the verified development implementation. BigQuery remains the scaled target, but no BigQuery build, query, schema change, or cloud mutation is claimed.
+The local DuckDB build is the verified development implementation. BigQuery remains an approval-gated
+scaled alternative, but no BigQuery build, query, schema change, or cloud mutation is claimed.
 
 ## Nature-of-suit mapping
 
@@ -49,3 +50,37 @@ and pending-age cells publish only at support of at least 200. The schema allowl
 dimensions and additive measures; case identifiers, source identifiers, docket values, exact dates,
 names, and document text are prohibited. Observed-duration averages use terminated cases only and
 remain descriptive rather than censoring-aware estimates.
+
+## Frozen public statistical-record mart
+
+`public-row-mart.v1` has one row per governed FJC statistical record, not one presumed unique case.
+The version-1 snapshot must contain exactly 5,008,334 rows. Every one of the 362,615 records associated
+with a colliding natural identifier remains in the mart with `identity_quality_status = collision` and
+its source-record count. No collision is silently deduplicated or presented as a canonical identity.
+
+The binding allowlist is a release-scoped opaque record key; circuit and district; month-precision
+filing and termination dates; pending and event status; descriptive duration; nature-of-suit code,
+family, and mapping status; jurisdiction; origin; procedural cohort; identity quality;
+source-record count; reviewed RECAP match availability; source cutoff; and dataset version. Office
+code, exact filing and termination dates, and record-level censoring date are denied. Month values use
+the first calendar day as an encoding convention, not as an asserted event day.
+
+The denylist includes source and natural identifiers, docket numbers, PACER and RECAP identifiers,
+case names, parties, judges, attorneys, documents, docket-entry text, review labels, matching evidence,
+private paths, credentials, and model artifacts. The opaque record key uses the first 128 bits of
+HMAC-SHA-256 over opaque-key version, immutable dataset version, and private source-record identifier
+with a private secret of at least 32 bytes. An approved identical replay preserves keys and bytes. The
+key is never an unsalted source-identifier hash and is stable only within its declared dataset version.
+
+The mart is denormalized and Zstandard-compressed for browser scans. It is partitioned by filing year,
+sorted for district and case-mix pruning, and built with a row-group policy selected by M17. Its
+manifest declares dataset and schema versions, source cutoff, partition path, row count, byte size,
+integrity value, null policy, metric-registry version, and minimum compatible application version.
+Generated partitions and manifests remain outside tracked Git. `config/public-row-mart-v1.toml` is
+the executable contract. It also freezes attribution, source-terms references, manifest
+compatibility, bounded exports, and the M22 approval gate for public row-data activation.
+
+The complete mart must reconcile exactly to the approved aggregate cube for every shared measure and
+supported grouping. Ordinary browser queries project columns, select only relevant partitions, enforce
+bounded result counts, and support cancellation. Full-dataset download is a separate explicit action.
+See the [row-level analytics release plan](row-level-analytics-plan.md).

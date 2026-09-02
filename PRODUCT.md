@@ -27,6 +27,10 @@ Users work in portfolio reviews and analytical investigations. One governed scop
 - Typed duration forecast refusal; no model artifact is promoted.
 - Deterministic synthetic staffing and budget scenarios from bounded user assumptions.
 - Static public dashboard and offline container; no live BigQuery, credentials, party, judge, attorney, or document-text data.
+- Identifier-minimized statistical-record exploration with synchronized slicers,
+  cross-filtering, drill-through, virtualized rows, column selection, and bounded export.
+- Browser queries operate on immutable static assets through a read-only production origin and do not
+  expose the private warehouse.
 - Product is not legal advice. Historical benchmarks are not predictions. Scenario amounts are not real cost forecasts.
 
 ## Brand Commitments
@@ -49,6 +53,15 @@ Use plain operational language and the approved calm, precise, restrained, audit
 3. Every number remains auditable to source, method, period, support, and limitation.
 4. Useful operations analytics may remain available when a separate capability fails.
 5. Users retain legal and operational judgment.
+6. Detail is earned through a publication contract, not by copying unrestricted source rows.
+
+## Analytical release
+
+M15 through M22 extend the aggregate cockpit into an eight-page analytical report while
+preserving its visual language and capability truth. The current aggregate cube remains the initial
+render and rollback path. The row-level mart includes the complete governed statistical-record
+population but only approved analytical columns and release-scoped opaque keys. See the
+[row-level analytics release plan](docs/row-level-analytics-plan.md).
 
 ## Accessibility & Inclusion
 

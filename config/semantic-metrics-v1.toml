@@ -1,0 +1,526 @@
+version = 1
+registry_id = "metrics.v1"
+dataset_version = "fjc-civil-2026-03-31.v1"
+schema_version = "1.0.0"
+default_query_rows = 200
+maximum_query_rows = 10000
+
+[[dimension]]
+id = "circuit_code"
+expression = "column"
+column = "circuit_code"
+cube_field = "circuit_code"
+type = "string"
+operators = ["eq", "in"]
+label = "Circuit"
+format = "code"
+definition = "Federal Judicial Center circuit code."
+tooltip = "Administrative circuit grouping from the source record."
+export_label = "Circuit code"
+
+[[dimension]]
+id = "district_code"
+expression = "column"
+column = "district_code"
+cube_field = "district_code"
+type = "string"
+operators = ["eq", "in"]
+label = "District"
+format = "code"
+definition = "Federal Judicial Center district code."
+tooltip = "Administrative district grouping; office detail is excluded."
+export_label = "District code"
+
+[[dimension]]
+id = "filed_month"
+expression = "column"
+column = "filed_month"
+cube_field = "filed_month"
+type = "date"
+operators = ["eq", "between"]
+label = "Filed month"
+format = "month"
+definition = "Calendar month of statistical filing, encoded as its first day."
+tooltip = "Month precision only; this is not the exact filing day."
+export_label = "Filed month"
+
+[[dimension]]
+id = "filing_year"
+expression = "filing_year"
+column = "filed_month"
+cube_field = "filing_year"
+type = "integer"
+operators = ["eq", "in", "between"]
+label = "Filing year"
+format = "year"
+definition = "Calendar year derived from filed month."
+tooltip = "Used for annual trends and physical partition selection."
+export_label = "Filing year"
+
+[[dimension]]
+id = "terminated_month"
+expression = "column"
+column = "terminated_month"
+cube_field = "terminated_month"
+type = "date"
+operators = ["eq", "between"]
+label = "Termination month"
+format = "month"
+definition = "Calendar month of statistical termination when observed."
+tooltip = "Null for pending records; month precision is not an exact event day."
+export_label = "Termination month"
+
+[[dimension]]
+id = "pending_status"
+expression = "column"
+column = "pending_status"
+cube_field = "pending_status"
+type = "boolean"
+operators = ["eq"]
+label = "Pending status"
+format = "boolean"
+definition = "Whether statistical termination was unobserved at the source cutoff."
+tooltip = "Pending records are right-censored, not treated as terminated."
+export_label = "Pending at cutoff"
+
+[[dimension]]
+id = "event_observed"
+expression = "column"
+column = "event_observed"
+cube_field = "event_observed"
+type = "boolean"
+operators = ["eq"]
+label = "Termination observed"
+format = "boolean"
+definition = "Whether statistical termination was observed by the source cutoff."
+tooltip = "Logical inverse of pending status; not a legal outcome."
+export_label = "Termination observed"
+
+[[dimension]]
+id = "nature_of_suit_code"
+expression = "column"
+column = "nature_of_suit_code"
+cube_field = "nature_of_suit_code"
+type = "string"
+operators = ["eq", "in"]
+label = "Nature-of-suit code"
+format = "code"
+definition = "Exact codebook-supported nature-of-suit code."
+tooltip = "Null only for explicitly unsupported legacy source values."
+export_label = "Nature-of-suit code"
+
+[[dimension]]
+id = "nature_of_suit_family"
+expression = "column"
+column = "nature_of_suit_family"
+cube_field = "nature_family"
+type = "string"
+operators = ["eq", "in"]
+label = "Nature family"
+format = "category"
+definition = "Versioned analytical nature-of-suit family."
+tooltip = "Coarse administrative case-mix grouping, not legal advice."
+export_label = "Nature family"
+
+[[dimension]]
+id = "nature_of_suit_mapping_status"
+expression = "column"
+column = "nature_of_suit_mapping_status"
+cube_field = "nature_of_suit_mapping_status"
+type = "string"
+operators = ["eq", "in"]
+label = "Nature mapping status"
+format = "category"
+definition = "Whether the source nature code has exact codebook support."
+tooltip = "Unsupported values remain labeled rather than guessed."
+export_label = "Nature mapping status"
+
+[[dimension]]
+id = "jurisdiction_code"
+expression = "column"
+column = "jurisdiction_code"
+cube_field = "jurisdiction_code"
+type = "string"
+operators = ["eq", "in"]
+label = "Jurisdiction"
+format = "code"
+definition = "Federal Judicial Center jurisdiction category."
+tooltip = "Administrative source category."
+export_label = "Jurisdiction code"
+
+[[dimension]]
+id = "origin_code"
+expression = "column"
+column = "origin_code"
+cube_field = "origin_code"
+type = "string"
+operators = ["eq", "in"]
+label = "Origin"
+format = "code"
+definition = "Federal Judicial Center procedural-origin code."
+tooltip = "Administrative source category."
+export_label = "Origin code"
+
+[[dimension]]
+id = "procedural_cohort"
+expression = "column"
+column = "procedural_cohort"
+cube_field = "procedural_cohort"
+type = "string"
+operators = ["eq", "in"]
+label = "Procedural cohort"
+format = "category"
+definition = "Governed descriptive procedural grouping derived at intake."
+tooltip = "Administrative cohort only; not a legal classification."
+export_label = "Procedural cohort"
+
+[[dimension]]
+id = "identity_quality_status"
+expression = "column"
+column = "identity_quality_status"
+cube_field = "identity_quality_status"
+type = "string"
+operators = ["eq", "in"]
+label = "Identity quality"
+format = "category"
+definition = "Whether the private natural identifier is canonical or colliding."
+tooltip = "Collision rows remain statistical records and are not unique cases."
+export_label = "Identity quality"
+
+[[dimension]]
+id = "source_record_count"
+expression = "column"
+column = "source_record_count"
+cube_field = "source_record_count"
+type = "integer"
+operators = ["eq", "in", "between"]
+label = "Source-record count"
+format = "integer"
+definition = "Records sharing the private natural identifier."
+tooltip = "One for canonical identity and at least two for collisions."
+export_label = "Source-record count"
+
+[[dimension]]
+id = "recap_match_available"
+expression = "column"
+column = "recap_match_available"
+cube_field = "recap_match_available"
+type = "boolean"
+operators = ["eq"]
+label = "RECAP match available"
+format = "boolean"
+definition = "Whether a reviewed one-to-one RECAP identity match is available."
+tooltip = "Availability only; no RECAP identifier or event content is exposed."
+export_label = "RECAP match available"
+
+[[dimension]]
+id = "age_band"
+expression = "age_band"
+column = "duration_days"
+cube_field = "age_band"
+type = "string"
+operators = ["eq", "in"]
+label = "Pending age band"
+format = "category"
+definition = "Pending follow-up grouped as under one, one to two, two to five, or at least five years."
+tooltip = "Computed only in pending-inventory context from right-censored duration."
+export_label = "Pending age band"
+
+[[measure]]
+id = "statistical_records"
+label = "Statistical records"
+format = "integer"
+unit = "records"
+definition = "Count of governed FJC statistical records in scope."
+tooltip = "One record is not guaranteed to represent one unique legal case."
+limitation = "Collision-labeled rows remain included."
+export_label = "Statistical records"
+
+[[measure]]
+id = "collision_free_records"
+label = "Collision-free records"
+format = "integer"
+unit = "records"
+definition = "Records whose private natural identifier occurs once in the snapshot."
+tooltip = "Excludes collision-labeled statistical records from this measure only."
+limitation = "Snapshot uniqueness is not cross-system identity certainty."
+export_label = "Collision-free records"
+
+[[measure]]
+id = "pending_records"
+label = "Pending records"
+format = "integer"
+unit = "records"
+definition = "Records without observed statistical termination at the source cutoff."
+tooltip = "Pending records are preserved as right-censored observations."
+limitation = "Pending status reflects the source snapshot, not current docket status."
+export_label = "Pending records"
+
+[[measure]]
+id = "terminated_records"
+label = "Observed terminations"
+format = "integer"
+unit = "records"
+definition = "Records with statistical termination observed by the source cutoff."
+tooltip = "Statistical termination is not a legal outcome classification."
+limitation = "No outcome direction or prediction is implied."
+export_label = "Observed terminations"
+
+[[measure]]
+id = "matched_records"
+label = "RECAP-matched records"
+format = "integer"
+unit = "records"
+definition = "Records with a reviewed one-to-one RECAP identity match."
+tooltip = "Measures match availability, not docket-event coverage."
+limitation = "Unmatched records may still have public dockets outside the retained match rule."
+export_label = "RECAP-matched records"
+
+[[measure]]
+id = "supported_nature_records"
+label = "Mapped nature records"
+format = "integer"
+unit = "records"
+definition = "Records with exact codebook-supported nature-of-suit mapping."
+tooltip = "Unsupported legacy codes remain visible and are never guessed."
+limitation = "Support is specific to the versioned mapping."
+export_label = "Mapped nature records"
+
+[[measure]]
+id = "average_observed_duration_days"
+label = "Average observed duration"
+format = "days_1"
+unit = "days"
+definition = "Mean filing-to-termination days among records with observed statistical termination."
+tooltip = "Descriptive terminated-record average; pending records are excluded from this measure."
+limitation = "Not a forecast for an open or future matter."
+export_label = "Average observed duration days"
+
+[[measure]]
+id = "pending_share"
+label = "Pending share"
+format = "percent_1"
+unit = "share"
+definition = "Pending records divided by all statistical records in scope."
+tooltip = "Snapshot inventory share with pending records preserved."
+limitation = "Not a probability that a new filing will remain open."
+export_label = "Pending share"
+
+[[measure]]
+id = "match_coverage"
+label = "RECAP match coverage"
+format = "percent_1"
+unit = "share"
+definition = "RECAP-matched records divided by all statistical records in scope."
+tooltip = "Identity-match availability, not event or document completeness."
+limitation = "No minimum coverage target applies."
+export_label = "RECAP match coverage"
+
+[[measure]]
+id = "followup_days"
+label = "Follow-up days"
+format = "integer"
+unit = "days"
+definition = "Total filing-to-termination or filing-to-cutoff days across records in scope."
+tooltip = "Includes observed duration and right-censored follow-up."
+limitation = "Additive exposure measure, not average time to disposition."
+export_label = "Follow-up days"
+
+[[measure]]
+id = "average_age_days"
+label = "Average pending age"
+format = "days_1"
+unit = "days"
+definition = "Mean filing-to-cutoff days among pending records in scope."
+tooltip = "Right-censored inventory age at the source snapshot."
+limitation = "Not remaining duration or predicted time to termination."
+export_label = "Average pending age days"
+
+[[context]]
+id = "portfolio"
+label = "Portfolio"
+predicate = "all"
+dimensions = ["circuit_code", "district_code", "filed_month", "filing_year", "terminated_month", "pending_status", "event_observed", "nature_of_suit_code", "nature_of_suit_family", "nature_of_suit_mapping_status", "jurisdiction_code", "origin_code", "procedural_cohort", "identity_quality_status", "source_record_count", "recap_match_available"]
+measures = ["statistical_records", "collision_free_records", "pending_records", "terminated_records", "matched_records", "supported_nature_records", "average_observed_duration_days", "pending_share", "match_coverage"]
+support_measure = "statistical_records"
+minimum_support = 200
+cube_collection = "portfolio_slices"
+reconciliation_dimensions = ["district_code", "nature_of_suit_family"]
+reconciliation_groupings = [["district_code", "nature_of_suit_family"], ["district_code"], ["nature_of_suit_family"], []]
+
+[[context]]
+id = "filing"
+label = "Filing cohorts"
+predicate = "all"
+dimensions = ["circuit_code", "district_code", "filed_month", "filing_year", "pending_status", "event_observed", "nature_of_suit_code", "nature_of_suit_family", "nature_of_suit_mapping_status", "jurisdiction_code", "origin_code", "procedural_cohort", "identity_quality_status", "source_record_count", "recap_match_available"]
+measures = ["statistical_records", "terminated_records", "pending_records", "matched_records", "followup_days"]
+support_measure = "statistical_records"
+minimum_support = 200
+cube_collection = "filing_series"
+reconciliation_dimensions = ["filing_year", "district_code", "nature_of_suit_family"]
+reconciliation_groupings = [["filing_year", "district_code", "nature_of_suit_family"], ["filing_year", "district_code"], ["filing_year", "nature_of_suit_family"], ["filing_year"]]
+
+[[context]]
+id = "pending_age"
+label = "Pending inventory"
+predicate = "pending"
+dimensions = ["age_band", "circuit_code", "district_code", "filed_month", "filing_year", "nature_of_suit_code", "nature_of_suit_family", "nature_of_suit_mapping_status", "jurisdiction_code", "origin_code", "procedural_cohort", "identity_quality_status", "source_record_count", "recap_match_available"]
+measures = ["pending_records", "matched_records", "average_age_days"]
+support_measure = "pending_records"
+minimum_support = 200
+cube_collection = "pending_age_series"
+reconciliation_dimensions = ["age_band", "district_code", "nature_of_suit_family"]
+reconciliation_groupings = [["age_band", "district_code", "nature_of_suit_family"], ["age_band", "district_code"], ["age_band", "nature_of_suit_family"], ["age_band"]]
+
+[[binding]]
+context = "portfolio"
+measure = "statistical_records"
+numerator = "rows"
+denominator = ""
+cube_fields = ["total_records", "duration_support_count"]
+cube_numerator_field = "total_records"
+cube_denominator_field = ""
+
+[[binding]]
+context = "portfolio"
+measure = "collision_free_records"
+numerator = "canonical_rows"
+denominator = ""
+cube_fields = ["collision_free_records"]
+cube_numerator_field = "collision_free_records"
+cube_denominator_field = ""
+
+[[binding]]
+context = "portfolio"
+measure = "pending_records"
+numerator = "pending_rows"
+denominator = ""
+cube_fields = ["pending_records", "censored_records"]
+cube_numerator_field = "pending_records"
+cube_denominator_field = ""
+
+[[binding]]
+context = "portfolio"
+measure = "terminated_records"
+numerator = "terminated_rows"
+denominator = ""
+cube_fields = ["terminated_records", "observed_terminations"]
+cube_numerator_field = "terminated_records"
+cube_denominator_field = ""
+
+[[binding]]
+context = "portfolio"
+measure = "matched_records"
+numerator = "matched_rows"
+denominator = ""
+cube_fields = ["matched_records"]
+cube_numerator_field = "matched_records"
+cube_denominator_field = ""
+
+[[binding]]
+context = "portfolio"
+measure = "supported_nature_records"
+numerator = "supported_nature_rows"
+denominator = ""
+cube_fields = ["supported_nature_records"]
+cube_numerator_field = "supported_nature_records"
+cube_denominator_field = ""
+
+[[binding]]
+context = "portfolio"
+measure = "average_observed_duration_days"
+numerator = "observed_duration_days"
+denominator = "terminated_rows"
+cube_fields = ["average_observed_duration_days"]
+cube_numerator_field = ""
+cube_denominator_field = "observed_terminations"
+
+[[binding]]
+context = "portfolio"
+measure = "pending_share"
+numerator = "pending_rows"
+denominator = "rows"
+cube_fields = ["pending_share"]
+cube_numerator_field = "pending_records"
+cube_denominator_field = "total_records"
+
+[[binding]]
+context = "portfolio"
+measure = "match_coverage"
+numerator = "matched_rows"
+denominator = "rows"
+cube_fields = ["match_coverage"]
+cube_numerator_field = "matched_records"
+cube_denominator_field = "total_records"
+
+[[binding]]
+context = "filing"
+measure = "statistical_records"
+numerator = "rows"
+denominator = ""
+cube_fields = ["cohort_records"]
+cube_numerator_field = "cohort_records"
+cube_denominator_field = ""
+
+[[binding]]
+context = "filing"
+measure = "terminated_records"
+numerator = "terminated_rows"
+denominator = ""
+cube_fields = ["observed_terminations"]
+cube_numerator_field = "observed_terminations"
+cube_denominator_field = ""
+
+[[binding]]
+context = "filing"
+measure = "pending_records"
+numerator = "pending_rows"
+denominator = ""
+cube_fields = ["pending_records"]
+cube_numerator_field = "pending_records"
+cube_denominator_field = ""
+
+[[binding]]
+context = "filing"
+measure = "matched_records"
+numerator = "matched_rows"
+denominator = ""
+cube_fields = ["matched_records"]
+cube_numerator_field = "matched_records"
+cube_denominator_field = ""
+
+[[binding]]
+context = "filing"
+measure = "followup_days"
+numerator = "duration_days"
+denominator = ""
+cube_fields = ["followup_days"]
+cube_numerator_field = "followup_days"
+cube_denominator_field = ""
+
+[[binding]]
+context = "pending_age"
+measure = "pending_records"
+numerator = "rows"
+denominator = ""
+cube_fields = ["pending_records"]
+cube_numerator_field = "pending_records"
+cube_denominator_field = ""
+
+[[binding]]
+context = "pending_age"
+measure = "matched_records"
+numerator = "matched_rows"
+denominator = ""
+cube_fields = ["matched_pending_records"]
+cube_numerator_field = "matched_pending_records"
+cube_denominator_field = ""
+
+[[binding]]
+context = "pending_age"
+measure = "average_age_days"
+numerator = "duration_days"
+denominator = "rows"
+cube_fields = ["average_age_days"]
+cube_numerator_field = ""
+cube_denominator_field = "pending_records"

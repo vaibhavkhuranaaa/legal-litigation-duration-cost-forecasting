@@ -143,16 +143,17 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
 }
 
 const remoteApi = {
-  readiness: () => request<Readiness>("/v1/readiness"),
-  portfolio: () => request<Portfolio>("/v1/portfolio"),
-  explorer: () => request<PopulationExplorer>("/v1/population-explorer"),
-  milestones: () => request<Milestones>("/v1/milestones/availability"),
-  provenance: () => request<Provenance>("/v1/provenance"),
-  benchmark: (cohort: string) =>
+  readiness: (signal?: AbortSignal) => request<Readiness>("/v1/readiness", { signal }),
+  portfolio: (signal?: AbortSignal) => request<Portfolio>("/v1/portfolio", { signal }),
+  explorer: (signal?: AbortSignal) => request<PopulationExplorer>("/v1/population-explorer", { signal }),
+  milestones: (signal?: AbortSignal) => request<Milestones>("/v1/milestones/availability", { signal }),
+  provenance: (signal?: AbortSignal) => request<Provenance>("/v1/provenance", { signal }),
+  benchmark: (cohort: string, signal?: AbortSignal) =>
     request<Benchmark>("/v1/benchmarks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ cohort }),
+      signal,
     }),
   scenario: (body: Record<string, number>) =>
     request<Scenario>("/v1/scenarios", {
@@ -174,7 +175,7 @@ const cohorts: Record<string, [number, number, number, number]> = {
 const round = (value: number) => Math.round((value + Number.EPSILON) * 100) / 100;
 
 const staticApi = {
-  readiness: async (): Promise<Readiness> => ({
+  readiness: async (_signal?: AbortSignal): Promise<Readiness> => ({
     status: "ready",
     operations_analytics: "ready",
     duration_forecast: "unavailable",
@@ -182,7 +183,7 @@ const staticApi = {
     scenario_engine: "ready",
     reason: "M7 model gates failed; operations analytics and synthetic scenarios remain available.",
   }),
-  portfolio: async (): Promise<Portfolio> => ({
+  portfolio: async (_signal?: AbortSignal): Promise<Portfolio> => ({
     source_snapshot: "2026-03-31",
     statistical_records: 5_008_334,
     pending_records: 457_327,
@@ -192,8 +193,8 @@ const staticApi = {
     recap_match_coverage: 2_065_537 / 4_645_719,
     interpretation: "Observed nationwide public court metadata; not a duration forecast.",
   }),
-  explorer: async (): Promise<PopulationExplorer> => request<PopulationExplorer>(fullPopulationUrl),
-  milestones: async (): Promise<Milestones> => ({
+  explorer: async (signal?: AbortSignal): Promise<PopulationExplorer> => request<PopulationExplorer>(fullPopulationUrl, { signal }),
+  milestones: async (_signal?: AbortSignal): Promise<Milestones> => ({
     status: "event_unavailable",
     event_updates_enabled: false,
     match_coverage: 2_065_537 / 4_645_719,
@@ -201,7 +202,7 @@ const staticApi = {
     fallback: "observed_portfolio_and_cohort_context",
     limitation: "No docket event is inferred from fields that are not present.",
   }),
-  provenance: async (): Promise<Provenance> => ({
+  provenance: async (_signal?: AbortSignal): Promise<Provenance> => ({
     release_version: "2",
     fjc_snapshot: "2026-03-31",
     recap_snapshot: "2026-06-30",
@@ -210,7 +211,7 @@ const staticApi = {
     legal_advice: false,
     real_cost_forecast: false,
   }),
-  benchmark: async (cohort: string): Promise<Benchmark> => {
+  benchmark: async (cohort: string, _signal?: AbortSignal): Promise<Benchmark> => {
     const values = cohorts[cohort];
     if (!values) throw new Error("Unknown benchmark cohort");
     return {

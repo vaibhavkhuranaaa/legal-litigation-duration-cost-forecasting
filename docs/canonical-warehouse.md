@@ -41,3 +41,7 @@ The source freshness clock comes from the successful ingestion run record, not t
 - BigQuery syntax parsing is local evidence only. No query or build has run in BigQuery.
 - The current build measures transformation correctness, not FJC and RECAP matching or model quality.
 - The planned dbt exposure is low maturity and does not imply a live consumer.
+
+The planned DuckDB-WASM report engine is not this private adapter and cannot open the development
+warehouse. It queries only the M15-approved, denormalized Parquet serving mart. BigQuery remains an
+approval-gated scaled alternative and is not a dependency of the planned public product.

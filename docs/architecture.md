@@ -1,6 +1,6 @@
 # Architecture
 
-## Local release path
+## Current verified release path
 
 The release container serves a compiled React client and versioned FastAPI contracts from one
 unprivileged process. Portfolio and cohort endpoints read a deidentified, aggregate-only SQLite seed
@@ -43,11 +43,73 @@ flowchart LR
 
 ## Analytics interface architecture
 
-The interface uses one global portfolio scope instead of independent report filters. District, case-family, filing-period, and procedural-cohort state are reflected in the URL and drive every supported dashboard panel. Pure TypeScript selectors derive the selected portfolio slice, annual filing series, pending-age series, district ranking, case-family ranking, and latest complete-year change from the versioned cube. The same selected evidence is included in the exported JSON view.
+The interface uses one global portfolio scope instead of independent report filters. Report, district,
+case family, historical-cohort context, ranking mode, and drill origin are reflected in a canonical URL.
+Pure TypeScript selectors derive the selected portfolio slice, annual filing series, pending-age series,
+district ranking, case-family ranking, and latest complete-year change from the versioned cube. Relative
+URL bookmarks in browser local storage restore the same compatible report context.
 
-`App.tsx` owns API loading, URL state, export, workspace navigation, and scenario requests. `AnalyticsDashboard.tsx` owns analytical composition and chart rendering. `population.ts` contains deterministic selection and ranking logic without browser or presentation dependencies. The FastAPI service remains the typed runtime boundary, while the static Pages build loads the identical cube directly. Neither path can access private data.
+`App.tsx` owns cancellable data loading, URL history, retry, and state normalization.
+`ReportWorkspace.tsx` owns the eight-report shell, shared scope, navigation, bookmarks, and report
+composition. `RecordExplorer.tsx` owns the bounded table, column controls, detail, and download
+workflow. `record-explorer.ts` owns allowlisted query compilation, stable sorting, CSV safety, and
+normalization. `row-query-engine.ts` validates the manifest and executes one annual partition through
+DuckDB-WASM. `row-origin-contract.ts` rejects incompatible origins, manifests, redirects, media types,
+and non-range partition responses before query registration. Cancellation and timeout replace the
+worker while preserving selected scope. `report-state.ts` owns pure URL parsing and serialization;
+`AnalyticsDashboard.tsx`
+retains shared chart renderers; and `population.ts` retains deterministic selectors.
+The FastAPI service remains the typed runtime boundary, while the static Pages build loads the identical
+cube directly. Neither path can access private data.
 
 The synthetic scenario engine is a connected secondary workspace rather than the product's primary claim. It accepts bounded user assumptions and returns deterministic sensitivity cases. It does not consume the selected portfolio as an implied forecast, observed cost, or recommended staffing plan.
+
+## Governed M15 through M22 path
+
+The v2.0 release adds a separate browser serving engine. A deterministic private build produces an
+identifier-minimized statistical-record mart, annual Zstandard Parquet partitions, and an immutable
+manifest. The declarative semantic metric registry remains tracked and tested; its compiled copy is a
+generated deployment asset. Parquet, manifests containing data paths, and other generated data assets
+do not enter tracked Git. GitHub Pages serves the application shell; an approved immutable R2 prefix
+and read-only Worker serve the generated row assets without placing them in Git history. The Pages
+workflow injects the production row-data origin at build time.
+
+The React shell loads the aggregate cube first and uses it for all eight report destinations. M20
+runs detail queries in DuckDB-WASM inside its browser worker and returns bounded Arrow pages to a
+virtualized table. It activates one annual partition, projects approved columns, parameterizes filter
+values, applies a stable opaque-key tie-breaker, and enforces result ceilings. CSV and filtered
+Parquet repeat the declared scope; Parquet is read back for row and schema verification, and each
+bounded export prepares a deterministic JSON provenance sidecar. Complete-data
+links remain a separate explicit path.
+
+This browser DuckDB-WASM engine is distinct from the private DuckDB development warehouse. It can
+access only the published mart. The app reads all paths through `DATA_BASE_URL`; an object-storage
+fallback may replace the Pages origin only if M17 evidence requires it and the release contract stays
+identical. A versioned manifest activates the application and data together, and rollback restores the
+last verified manifest plus application bundle.
+
+The approved M22 run uploaded one immutable object-store prefix and verified its exact Parquet URLs
+through the production Worker before Pages activation. The aggregate cube remains the initial-render
+fast path and fail-closed fallback.
+
+```mermaid
+flowchart LR
+  H["Private statistical-record mart"] --> B["Public mart builder"]
+  B --> G["Privacy, contract, and reconciliation gates"]
+  G --> P["Annual Parquet partitions"]
+  T["Tracked metric registry"] --> G
+  G --> M["Manifest and compiled registry"]
+  G --> C["Aggregate cube"]
+  P --> O["Versioned static data origin"]
+  M --> O
+  C --> U["React report shell"]
+  O --> W["DuckDB-WASM Web Worker"]
+  W --> A["Bounded Arrow batches"]
+  A --> U
+```
+
+The complete plan and performance gates are in
+[row-level analytics release plan](row-level-analytics-plan.md).
 
 ## Data boundary
 

@@ -1,0 +1,31 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "legal-litigation-row-data",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": {
+    "RELEASE_PREFIX": "releases/m22-cce10cfbba949f11add9582130aeab4712514f14f71009d8aee6c2c4f123b1f1",
+    "CANDIDATE_ORIGIN": "https://legal-litigation-row-data.gp-access-planner.workers.dev",
+    "PAGES_ORIGIN": "https://vaibhavkhuranaaa.github.io"
+  },
+  "r2_buckets": [
+    {
+      "binding": "DATA",
+      "bucket_name": "legal-litigation-row-releases"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 0.01,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": false
+    }
+  }
+}

@@ -57,7 +57,7 @@ const integer = new Intl.NumberFormat("en-US");
 const percent = new Intl.NumberFormat("en-US", { style: "percent", maximumFractionDigits: 1 });
 const signedPercent = new Intl.NumberFormat("en-US", { style: "percent", maximumFractionDigits: 1, signDisplay: "always" });
 
-function FilingTrend({ explorer, filters }: { explorer: PopulationExplorer; filters: PopulationFilters }) {
+export function FilingTrend({ explorer, filters }: { explorer: PopulationExplorer; filters: PopulationFilters }) {
   const target = useRef<HTMLDivElement>(null);
   const data = useMemo(() => selectFilingSeries(explorer, filters), [explorer, filters]);
   const series = explorer.dimensions.filing_years.map((year) => data.find((row) => row.filing_year === year));
@@ -108,7 +108,7 @@ function FilingTrend({ explorer, filters }: { explorer: PopulationExplorer; filt
   return <div ref={target} className="chart chart-wide" role="img" aria-label={`Filing volume by year. ${summary}`} />;
 }
 
-function PendingAge({ explorer, filters }: { explorer: PopulationExplorer; filters: PopulationFilters }) {
+export function PendingAge({ explorer, filters }: { explorer: PopulationExplorer; filters: PopulationFilters }) {
   const target = useRef<HTMLDivElement>(null);
   const data = useMemo(() => selectPendingAgeSeries(explorer, filters), [explorer, filters]);
   const series = explorer.dimensions.age_bands.map((band) => data.find((row) => row.age_band === band));
@@ -162,7 +162,7 @@ function PendingAge({ explorer, filters }: { explorer: PopulationExplorer; filte
   return <div ref={target} className="chart chart-compact" role="img" aria-label={`Pending inventory by age. ${summary}`} />;
 }
 
-function CohortBenchmark({ benchmark }: { benchmark: Benchmark }) {
+export function CohortBenchmark({ benchmark }: { benchmark: Benchmark }) {
   const target = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -358,7 +358,7 @@ export function AnalyticsDashboard({
             <section className="analysis-panel ranking-panel" aria-labelledby="ranking-title">
               <div className="panel-heading ranking-heading">
                 <div><h2 id="ranking-title">Workload concentration</h2><p>Ranked by pending inventory within {rankingScope}.</p></div>
-                <div className="segmented-control" aria-label="Ranking dimension">
+                <div className="segmented-control" role="group" aria-label="Ranking dimension">
                   <button type="button" aria-pressed={rankingMode === "district"} onClick={() => onRankingModeChange("district")}>Districts</button>
                   <button type="button" aria-pressed={rankingMode === "nature"} onClick={() => onRankingModeChange("nature")}>Case families</button>
                 </div>

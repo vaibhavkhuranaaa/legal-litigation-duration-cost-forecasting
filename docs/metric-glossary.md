@@ -20,3 +20,33 @@
 | Match coverage | 0% promoted | 44.46% of collision-free cases; 41.24% of full statistical population | Reported overall and by district, filing year, and nature family; no minimum and never optimized by weakening precision | Disclose where later milestone updates can be supported |
 
 M7 verifies the model metrics on a time-ordered held-out cohort. Kaplan-Meier calibration error is 4.86 percent at 12 months and 11.47 percent at 24 months. XGBoost AFT calibration error is 1.74 percent and 8.09 percent. Worst supported-slice errors are 77.81 percent and 52.52 percent. Both estimators therefore fail release calibration. XGBoost improves integrated Brier score by 13.77 percent with a case-paired bootstrap 95 percent interval from 13.63 percent to 13.91 percent, but improvement does not override failed calibration. See [intake survival evaluation](survival-model.md).
+
+## Row-level release metrics
+
+These targets govern M15 through M22. All 33 frozen M22 checks pass for the exact production inventory,
+including live reconciliation, public-origin behavior, 2,256 ms browser query p95, zero-cost evidence,
+and provider rollback. Release v2.0 is published under those frozen gates.
+
+| Metric | Definition | Direction | Planned threshold | Decision |
+| --- | --- | --- | --- | --- |
+| Publication contract coverage | Proposed public fields with a recorded classification divided by all proposed fields | Higher | 100% | Freeze M15 schema |
+| Prohibited public fields | Denylisted fields found in the candidate mart | Lower | 0 | Permit mart promotion |
+| Statistical-record reconciliation | Released rows divided by the 5,008,334-row version-1 snapshot expectation | Exact | 100% | Accept version-1 mart |
+| Collision retention | Released collision records divided by 362,615 expected collision records | Exact | 100% | Preserve source truth |
+| Record-key uniqueness | Distinct valid release keys divided by released rows | Exact | 100% | Permit row references |
+| Aggregate reconciliation error | Maximum absolute difference between row-mart and approved-cube shared measures | Lower | 0 | Permit semantic release |
+| Semantic registry coverage | Released measures represented by the versioned registry | Exact | 100% | Use one semantic source |
+| Semantic reconciliation error | Maximum exact difference across registered shared measures and supported slices | Lower | 0 | Permit report integration |
+| Initial shell load | Largest Contentful Paint for the shell and aggregate overview on the frozen reference profile | Lower | At most 2.5 seconds | Accept initial experience |
+| Cold filtered query p95 | 95th-percentile uncached time for the frozen representative query corpus | Lower | At most 3 seconds | Select browser architecture |
+| Warm filtered query p95 | 95th-percentile cached time for the same corpus | Lower | At most 1 second | Accept interactive performance |
+| Query bytes read | Network bytes required by each representative query | Report and bound | No unintended full fetch | Verify pruning |
+| Peak browser memory | Maximum browser memory over the query corpus | Report and bound | No memory failure | Define supported profiles |
+| Unbounded default queries | Record-explorer queries without a declared result ceiling | Lower | 0 | Permit explorer release |
+| Accessibility violations | Automated accessibility violations across declared report states | Lower | 0 | Permit interface release |
+| Recurring infrastructure cost | Actual recurring spend for the declared usage profile | Lower | $0 | Permit release under ceiling |
+
+M18 registers 11 measures, 17 dimensions, and three contexts. It maps all 20 aggregate-cube measure
+fields and reconciles 55,158 exact comparisons across 8,970 supported slices with zero error. Generated
+definitions and limitations are in [semantic metrics](semantic-metrics.md). M17 performance evidence
+remains specific to its pinned browser profiles and corpus.

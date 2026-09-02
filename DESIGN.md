@@ -175,6 +175,18 @@ Below 1180px, the analytical grid becomes a single column and scenario inputs st
 
 **The Bound Scope Rule.** Filters, scope interpretation, result panels, and export represent one shared analytical state. A scope change must visibly rebind the entire workspace.
 
+### Planned report navigation
+
+M19 extends the rail to eight report destinations while preserving the same visual system: Executive
+Overview, Filing Trends, Pending Inventory and Aging, Case Mix, District Comparison, Record Explorer,
+Data Quality and Coverage, and Scenario Lab and Methods. The rail and mobile More disclosure must show
+location without imitating another analytics product's trade dress.
+
+Active-filter chips sit below the query bar. Breadcrumbs appear only for drill-through context, not as
+decoration. Selected chart marks and table rows use the existing soft teal treatment. Cross-filtering
+must visibly update dependent panels and offer a clear-selection action. URL state and bookmarks
+restore the same compatible scope.
+
 ## Elevation & Depth
 
 The system is flat by default. Depth comes from the navy shell, white analytical planes, cool canvas, and structural 1px rules. Shadows are reserved for persistent controls that cross content layers: the sticky global query bar uses a restrained shadow (`0 6px 16px rgba(12, 23, 40, .12)`), and the mobile More menu uses a stronger directional shadow (`0 14px 28px rgba(5, 13, 24, .32)`). Cards and analytical panels do not float at rest.
@@ -229,6 +241,13 @@ Metric strips are joined white cells with square corners and shared dividers. Ea
 ### Tables and Rank Links
 
 Tables are compact, numerical, and horizontally scrollable. Headers use uppercase 9px labels on the cool canvas tone. Numbers align right; rank and identity columns align left. Interactive rank labels are visibly underlined, and selection uses the soft teal surface across the full row.
+
+The planned Record Explorer virtualizes rows, keeps a deterministic default sort, and supports a
+column picker, resizing, pinning, and a detail drawer. Pinned columns use structural borders, not
+shadows. Query progress, cancel, memory refusal, unavailable partition, and retry states stay inside
+the affected analytical surface. A cancelled or timed-out browser query preserves the analytical
+scope, replaces its worker, and announces recovery in that same surface. Export controls always state
+format, scope, and row bound before the action begins.
 
 ### Bounded States
 
